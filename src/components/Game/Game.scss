@@ -43,6 +43,17 @@
   height: 28px;
 }
 
+body.is-mobile .game__content-logo,
+[data-platform="mobile"] .game__content-logo {
+  position: fixed;
+  top: var(--tg-header-center-y, 58px);
+  left: 50%;
+  z-index: 5;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
 .game__content-field {
   width: 100%;
   margin-top: 27px;

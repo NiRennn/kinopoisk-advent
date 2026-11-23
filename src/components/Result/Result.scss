@@ -19,6 +19,17 @@
   height: 100dvh;
 }
 
+body.is-mobile .result--win .result__logo,
+[data-platform="mobile"] .result--win .result__logo {
+  position: fixed;
+  top: var(--tg-header-center-y, 58px);
+  left: 50%;
+  z-index: 5;
+  margin: 0;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
 .result--win.result--sent {
   overflow: hidden;
 

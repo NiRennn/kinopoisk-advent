@@ -52,7 +52,7 @@ function LaterDay({ date, onClose }: LaterDayProps) {
           </p>
         </div>
         <Button onClick={close}>Подожду</Button>
-      </div>
+      </div> 
     </div>,
     document.body,
   );
