@@ -37,15 +37,23 @@ export function partnerKey(day: Day): PartnerKey | null {
   return PARTNER_DAY[dayOf(day.date)] ?? null
 }
 
+function nextDate(iso: string) {
+  const [year, month, day] = iso.split("-").map(Number)
+  const date = new Date(Date.UTC(year, month - 1, day + 1))
+  const monthText = String(date.getUTCMonth() + 1).padStart(2, "0")
+  const dayText = String(date.getUTCDate()).padStart(2, "0")
+  return `${date.getUTCFullYear()}-${monthText}-${dayText}`
+}
+
 export function cellView(day: Day, days: Day[]) {
   const key = partnerKey(day)
-  const current = days.find((item) => item.status === "today" || item.status === "joined")
+  if (key === "zenit" && day.status !== "future") return { src: iceZenit, contain: true }
+  const current = [...days].reverse().find((item) => item.status !== "future")
   const preview =
     current != null &&
-    dayOf(day.date) === dayOf(current.date) + 1 &&
-    day.kind === "secret" &&
-    day.status === "future" &&
-    (current.status === "joined" || current.kind === "partner")
+    day.date === nextDate(current.date) &&
+    day.kind !== "partner" &&
+    day.status === "future"
 
   if (day.status === "closed" || (day.status === "joined" && day.kind !== "partner")) {
     return { src: iceYandex, contain: true }
