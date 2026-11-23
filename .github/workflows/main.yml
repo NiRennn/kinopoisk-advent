@@ -1,0 +1,31 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:          # ручной запуск из вкладки Actions
+
+concurrency:                  # два пуша подряд — второй деплой ждёт первый
+  group: deploy-advent-front
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check dist
+        run: test -f dist/index.html || (echo "dist/index.html не найден — собери фронт и закоммить dist" && exit 1)
+
+      - name: Upload dist
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          source: "dist/*"
+          target: "/home/projects/kp_advent/front/dist/"
+          strip_components: 1
