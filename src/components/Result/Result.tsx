@@ -8,11 +8,12 @@ import station from "../../assets/images/cells/ice-yandex1.png";
 import cubes from "../../assets/images/cells/cubes-123.png";
 import { ApiError } from "../../api/client";
 import type { Fact, WinnerForm } from "../../api/types";
+import { formatDayMonth } from "../../advent/format";
 
 export type ResultOutcome = "win" | "lose" | "missed";
 
 type ResultProps = {
-  day: number;
+  date: string;
   outcome: ResultOutcome;
   fact?: Fact | null;
   prizeImage?: string | null;
@@ -29,7 +30,7 @@ const FAIL_TITLES: Record<Exclude<ResultOutcome, "win">, string[]> = {
 };
 
 function Result({
-  day,
+  date,
   outcome,
   fact,
   prizeImage,
@@ -99,7 +100,7 @@ function Result({
       <div className="result__hero">
         {outcome === "win" && <img className="result__logo" src={logo} alt="Кинопоиск" />}
         {outcome === "win" && <img className="result__prize" src={prizeImage || station} alt="" />}
-        <p className="result__date">Итоги розыгрыша от {day} декабря</p>
+        <p className="result__date">Итоги розыгрыша от {formatDayMonth(date)}</p>
         {outcome === "win" ? (
           <h1 className="result__headline">Вы победитель!</h1>
         ) : (

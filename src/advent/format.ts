@@ -42,6 +42,13 @@ export function dayOf(date: string) {
   return Number(date.slice(8, 10))
 }
 
+export function formatDayMonth(value: string) {
+  const calendar = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+  if (calendar) return `${Number(calendar[3])} ${MONTHS[Number(calendar[2]) - 1]}`
+  const when = moscowDate(value)
+  return `${when.d} ${MONTHS[when.m - 1]}`
+}
+
 export function resultsLabel(iso: string | null, result: string | null) {
   if (!iso) return "Итоги скоро"
 

@@ -33,11 +33,51 @@ button,
 a,
 [role="button"] {
   -webkit-tap-highlight-color: transparent;
-  transition: transform 0.22s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.22s ease, background-color 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, background-color 0.3s ease, border-color 0.3s ease;
   user-select: none;
 
   &:active {
-    transform: scale(0.97);
+    transform: scale(0.985);
+  }
+}
+
+.later__veil,
+.past__veil {
+  transition: none;
+
+  &:active {
+    transform: none;
+  }
+}
+
+@keyframes overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes overlay-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes sheet-in {
+  from { transform: translateY(32px); }
+  to { transform: translateY(0); }
+}
+
+@keyframes sheet-out {
+  from { transform: translateY(0); }
+  to { transform: translateY(32px); }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

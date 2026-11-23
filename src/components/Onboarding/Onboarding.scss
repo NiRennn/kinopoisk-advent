@@ -16,7 +16,7 @@
     calc(var(--tg-safe-area-inset-bottom, 0px) + 20px);
   overflow: hidden;
   isolation: isolate;
-  transition: opacity 0.45s ease;
+  transition: opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .onboarding--closing {
@@ -63,6 +63,7 @@
   align-items: center;
   justify-content: center;
   gap: 20px;
+  animation: rise-in 0.65s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .onboarding__cubes {

@@ -12,16 +12,11 @@
   align-items: flex-end;
   justify-content: center;
   padding: 0 16px calc(var(--tg-safe-area-inset-bottom, 0px) + 20px);
-  opacity: 0;
-  transition: opacity 0.35s ease;
-}
-
-.later--in {
-  opacity: 1;
+  animation: overlay-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .later--closing {
-  opacity: 0;
+  animation: overlay-out 0.42s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   pointer-events: none;
 }
 
@@ -53,16 +48,11 @@
   padding: 91px 20px 20px;
   border-radius: 40px;
   background: #fff;
-  transform: translateY(24px);
-  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.later--in .later__card {
-  transform: none;
+  animation: sheet-in 0.68s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .later--closing .later__card {
-  transform: translateY(24px);
+  animation: sheet-out 0.4s cubic-bezier(0.4, 0, 1, 1) both;
 }
 
 .later__close {

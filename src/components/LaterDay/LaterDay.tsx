@@ -1,23 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import "./LaterDay.scss";
 import Button from "../Button/Button";
 import calendar from "../../assets/icons/calendar.svg";
 import cross from "../../assets/icons/cross.svg";
+import { formatDayMonth } from "../../advent/format";
 
 type LaterDayProps = {
-  day: number;
+  date: string;
   onClose: () => void;
 };
 
-function LaterDay({ day, onClose }: LaterDayProps) {
-  const [shown, setShown] = useState(false);
+function LaterDay({ date, onClose }: LaterDayProps) {
   const [closing, setClosing] = useState(false);
-
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => setShown(true));
-    return () => cancelAnimationFrame(frame);
-  }, []);
 
   const close = () => {
     if (closing) return;
@@ -26,11 +21,11 @@ function LaterDay({ day, onClose }: LaterDayProps) {
 
   return createPortal(
     <div
-      className={`later${shown ? " later--in" : ""}${closing ? " later--closing" : ""}`}
-      onTransitionEnd={(event) => {
+      className={`later${closing ? " later--closing" : ""}`}
+      onAnimationEnd={(event) => {
         if (
           event.target === event.currentTarget &&
-          event.propertyName === "opacity" &&
+          event.animationName === "overlay-out" &&
           closing
         ) {
           onClose();
@@ -49,7 +44,7 @@ function LaterDay({ day, onClose }: LaterDayProps) {
         </button>
         <div className="later__copy">
           <img className="later__icon" src={calendar} alt="" />
-          <h2 className="later__title">Откроем {day} декабря</h2>
+          <h2 className="later__title">Откроем {formatDayMonth(date)}</h2>
           <p className="later__text">
             Lorem ipsum dolor sit amet consectetur. Donec orci ullamcorper sed
             diam in massa. Faucibus ullamcorper ac consequat feugiat sit viverra

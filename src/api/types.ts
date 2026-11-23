@@ -53,6 +53,7 @@ export type OpenResponse = {
   user: AdventUser
   subscribed: boolean
   bot_url: string
+  onboarding?: boolean
   days: Day[]
 }
 

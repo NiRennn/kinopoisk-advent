@@ -193,7 +193,7 @@
       height: 34px;
       border-radius: 50%;
       background: #ff5500;
-      transition: transform 0.2s ease;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
   }
 

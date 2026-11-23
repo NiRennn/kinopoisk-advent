@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import "./PastDay.scss";
 import Button from "../Button/Button";
@@ -13,13 +13,7 @@ type PastDayProps = {
 };
 
 function PastDay({ image, text, onClose, onOpen }: PastDayProps) {
-  const [shown, setShown] = useState(false);
   const [closing, setClosing] = useState(false);
-
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => setShown(true));
-    return () => cancelAnimationFrame(frame);
-  }, []);
 
   const close = () => {
     if (closing) return;
@@ -28,11 +22,11 @@ function PastDay({ image, text, onClose, onOpen }: PastDayProps) {
 
   return createPortal(
     <div
-      className={`past${shown ? " past--in" : ""}${closing ? " past--closing" : ""}`}
-      onTransitionEnd={(event) => {
+      className={`past${closing ? " past--closing" : ""}`}
+      onAnimationEnd={(event) => {
         if (
           event.target === event.currentTarget &&
-          event.propertyName === "opacity" &&
+          event.animationName === "overlay-out" &&
           closing
         ) {
           onClose();

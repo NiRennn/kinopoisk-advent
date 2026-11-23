@@ -20,7 +20,6 @@ import logo from "../../assets/icons/kinopoisk.svg"
 import info from "../../assets/icons/info-gray.svg"
 import bubble from "../../assets/images/bubble.png"
 
-const ONBOARDING_KEY = "kp-advent-onboarding"
 const SEEN_KEY = "kp-advent-seen-results"
 
 type Modal =
@@ -110,10 +109,11 @@ function Game() {
   }, [navigate])
 
   useEffect(() => {
+    localStorage.removeItem("kp-advent-onboarding")
     if (phase !== "ready" || introduced.current) return
     introduced.current = true
     const action = pendingAction(days)
-    if (!localStorage.getItem(ONBOARDING_KEY)) {
+    if (initial?.onboarding) {
       pendingRef.current = action
       setShowOnboarding(true)
       return
@@ -247,7 +247,6 @@ function Game() {
   }
 
   const finishOnboarding = () => {
-    localStorage.setItem(ONBOARDING_KEY, "1")
     setShowOnboarding(false)
     const action = pendingRef.current
     pendingRef.current = null
@@ -389,7 +388,7 @@ function Game() {
       )}
 
       {phase === "ready" && modal?.type === "later" && (
-        <LaterDay day={dayOf(modal.day.date)} onClose={() => setModal(null)} />
+        <LaterDay date={modal.day.date} onClose={() => setModal(null)} />
       )}
 
       {phase === "ready" && modal?.type === "past" && (
@@ -403,7 +402,7 @@ function Game() {
 
       {phase === "ready" && modal?.type === "result" && day && outcome && (
         <Result
-          day={dayOf(day.date)}
+          date={day.date}
           outcome={outcome}
           fact={day.fact}
           prizeImage={day.prize?.image}
