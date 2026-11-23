@@ -1,0 +1,121 @@
+.past {
+  position: fixed;
+  z-index: 40;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-width: 500px;
+  margin-inline: auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 16px calc(var(--tg-safe-area-inset-bottom, 0px) + 20px);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.past--in {
+  opacity: 1;
+}
+
+.past--closing {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.past__veil {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.7) 100%
+  );
+  backdrop-filter: blur(6.15px);
+  -webkit-backdrop-filter: blur(6.15px);
+}
+
+.past__card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 399px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 20px 20px;
+  border-radius: 40px;
+  background: #fff;
+  transform: translateY(24px);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.past--in .past__card {
+  transform: none;
+}
+
+.past--closing .past__card {
+  transform: translateY(24px);
+}
+
+.past__close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 60px;
+  background: rgba(26, 26, 26, 0.06);
+
+  img {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.past__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: min(315px, 100%);
+  text-align: center;
+}
+
+.past__prize {
+  width: 136px;
+  height: 136px;
+  object-fit: contain;
+}
+
+.past__title {
+  margin: 0;
+  font-family: "kinopoisk-semibold", sans-serif;
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1;
+  color: #000;
+}
+
+.past__text {
+  margin: 0;
+  font-family: "kinopoisk-regular", sans-serif;
+  font-size: 14px;
+  line-height: 1.1;
+  color: #000;
+  opacity: 0.6;
+}
+
+.past .btn {
+  margin-top: auto;
+  letter-spacing: -0.525px;
+}

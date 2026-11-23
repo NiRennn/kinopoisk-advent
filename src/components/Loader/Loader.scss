@@ -1,0 +1,29 @@
+.loader {
+  position: absolute;
+  z-index: 2;
+  left: calc(100% * 16 / 390);
+  right: calc(100% * 17 / 390);
+  bottom: max(24px, calc(100% * 36 / 844));
+  height: 5px;
+  border-radius: 100px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.loader__fill {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: #ff4d00;
+  animation: loader-fill 2.8s cubic-bezier(0.33, 0.86, 0.32, 1) forwards;
+}
+
+@keyframes loader-fill {
+  0% {
+    width: 6%;
+  }
+
+  100% {
+    width: 100%;
+  }
+}
