@@ -4,6 +4,7 @@ import "./Game.scss"
 import appRoutes from "../../routes/routes"
 import Onboarding from "../Onboarding/Onboarding"
 import SecretGift from "../SecretGift/SecretGift"
+import FinalGift from "../FinalGift/FinalGift"
 import PartnerGift from "../PartnerGift/PartnerGift"
 import LaterDay from "../LaterDay/LaterDay"
 import PastDay from "../PastDay/PastDay"
@@ -26,7 +27,7 @@ const SEEN_KEY = "kp-advent-seen-results"
 const ONBOARDING_KEY = "kp-advent-onboarding"
 
 type Modal =
-  | { type: "gift" | "partner" | "later" | "past" | "result"; day: Day }
+  | { type: "gift" | "partner" | "final" | "later" | "past" | "result"; day: Day }
   | null
 
 function readSeen() {
@@ -68,6 +69,10 @@ function outcomeOf(result: Day["result"]): ResultOutcome | null {
 }
 
 function screenFor(day: Day, mode: "cell" | "result"): Modal {
+  if (day.kind === "final" && day.status !== "future") {
+    if (day.result === "missed") return mode === "result" ? { type: "result", day } : { type: "past", day }
+    return { type: "final", day }
+  }
   if (mode === "result" && day.result && day.result !== "pending") return { type: "result", day }
   if (day.status === "future") return { type: "later", day }
   if (day.status === "closed" && day.result && day.result !== "pending") return { type: "past", day }
@@ -373,6 +378,21 @@ function Game() {
           resultsLabel={label}
           resultsAt={modal.day.results_at}
           onJoin={() => participate(modal.day)}
+          onClose={() => setModal(null)}
+        />
+      )}
+
+      {phase === "ready" && modal?.type === "final" && (
+        <FinalGift
+          joined={modal.day.status === "joined" || modal.day.participated}
+          title={modal.day.prize?.title || ""}
+          image={modal.day.prize?.image}
+          resultsLabel={label}
+          resultsAt={modal.day.results_at}
+          outcome={modal.day.result === "won" || modal.day.result === "lost" ? modal.day.result : null}
+          onJoin={() => participate(modal.day)}
+          onRules={() => openTelegram(botUrl)}
+          onClaim={() => openTelegram(botUrl)}
           onClose={() => setModal(null)}
         />
       )}

@@ -5,7 +5,6 @@ import cellPrize from "../assets/images/cells/cell-prize1.png"
 import cellRfc from "../assets/images/cells/cell-rfc1.png"
 import cellRuspace from "../assets/images/cells/cell-ruspace1.png"
 import cellZenit from "../assets/images/cells/cell-zenit1.png"
-import iceIphone from "../assets/images/cells/ice-iphone1.png"
 import icePrize from "../assets/images/cells/ice-prize1.png"
 import iceYandex from "../assets/images/cells/ice-yandex1.png"
 import iceZenit from "../assets/images/cells/ice-zenit.png"
@@ -61,8 +60,11 @@ function nextDate(iso: string) {
 }
 
 export function cellView(day: Day, days: Day[]) {
+  const joined = day.participated || day.status === "joined"
+  if (day.status === "today" && !joined) return { src: icePrize, contain: false }
+  if (joined) return { src: day.prize?.image || icePrize, contain: Boolean(day.prize?.image) }
+
   const key = partnerKey(day)
-  if (key === "zenit" && day.status !== "future") return { src: iceZenit, contain: true }
   const current = [...days].reverse().find((item) => item.status !== "future")
   const preview =
     current != null &&
@@ -70,16 +72,10 @@ export function cellView(day: Day, days: Day[]) {
     day.kind !== "partner" &&
     day.status === "future"
 
-  if (day.status === "closed" || (day.status === "joined" && day.kind !== "partner")) {
+  if (day.status === "closed") {
+    if (key === "zenit") return { src: iceZenit, contain: true }
     return { src: iceYandex, contain: true }
   }
-  if (day.kind === "final" && (day.status === "today" || day.status === "joined")) {
-    return { src: iceIphone, contain: true }
-  }
-  if (key && (day.status === "today" || day.status === "joined")) {
-    return { src: key === "zenit" ? iceZenit : PARTNER_CELL[key], contain: true }
-  }
-  if (day.status === "today") return { src: icePrize, contain: false }
   if (preview) return { src: cellPrize, contain: false }
   if (key) return { src: PARTNER_CELL[key], contain: false }
   return { src: cellEmpty, contain: false }

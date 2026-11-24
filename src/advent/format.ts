@@ -71,6 +71,24 @@ export function resultsLabel(iso: string | null, result: string | null) {
   return `Итоги ${when.d} ${MONTHS[when.m - 1]} в ${when.hm} МСК`
 }
 
+export function finalWhen(iso: string | null) {
+  if (!iso) return "скоро"
+  const when = moscowDate(iso)
+  const now = moscowDate(new Date().toISOString())
+  const whenStamp = Date.UTC(when.y, when.m - 1, when.d)
+  const nowStamp = Date.UTC(now.y, now.m - 1, now.d)
+  const tomorrow = new Date(nowStamp + 86_400_000)
+  const isToday = whenStamp === nowStamp
+  const isTomorrow =
+    when.y === tomorrow.getUTCFullYear() &&
+    when.m === tomorrow.getUTCMonth() + 1 &&
+    when.d === tomorrow.getUTCDate()
+  const date = `${when.d} ${MONTHS[when.m - 1]}`
+  if (isToday) return `сегодня, ${date}, в ${when.hm} МСК`
+  if (isTomorrow) return `завтра, ${date}, в ${when.hm} МСК`
+  return `${date}, в ${when.hm} МСК`
+}
+
 export function joinedCopy(title: string, iso: string | null) {
   const prize = title.replace(/\s*\n\s*/g, " ").trim() || "приз"
   const tail = "Когда они будут готовы, в Telegram придет уведомление."

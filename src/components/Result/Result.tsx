@@ -31,6 +31,11 @@ const FAIL_TITLES: Record<Exclude<ResultOutcome, "win">, string[]> = {
   missed: ["Вы не успели", "открыть этот день"],
 };
 
+const FAIL_LEAD: Record<Exclude<ResultOutcome, "win">, string> = {
+  lose: "Сегодня удача улыбнулась кому-то другому. Но этот день тоже может подарить эмоции — вот одна из самых ярких историй этого спортивного года.",
+  missed: "Прием заявок на этот день завершен. Зато впереди еще новые подарки!",
+};
+
 function Result({
   date,
   outcome,
@@ -124,7 +129,7 @@ function Result({
       <div className="result__hero">
         {outcome === "win" && <img className="result__logo" src={logo} alt="Кинопоиск" />}
         {outcome === "win" && !digital && prizeImage && <img className="result__prize" src={prizeImage} alt="" />}
-        <p className="result__date">Итоги розыгрыша от {formatDayMonth(date)}</p>
+        {outcome !== "missed" && <p className="result__date">Итоги розыгрыша от {formatDayMonth(date)}</p>}
         {outcome === "win" ? (
           digital ? (
             <>
@@ -139,11 +144,14 @@ function Result({
             <h1 className="result__headline">Вы выиграли!</h1>
           )
         ) : (
-          <h1 className="result__headline">
-            {FAIL_TITLES[outcome][0]}
-            <br />
-            {FAIL_TITLES[outcome][1]}
-          </h1>
+          <>
+            <h1 className="result__headline">
+              {FAIL_TITLES[outcome][0]}
+              <br />
+              {FAIL_TITLES[outcome][1]}
+            </h1>
+            <p className="result__lead">{FAIL_LEAD[outcome]}</p>
+          </>
         )}
       </div>
 
@@ -243,22 +251,25 @@ function Result({
       )}
 
       {fail && (
-        <div className="result__card"> 
-          <div className="result__chip">Интересный факт</div>
-          <img className="result__cubes" src={fact?.image || cubes} alt="" />
-          <h2 className="result__fact-title">
-            {(fact?.title || "Обратный отсчёт\nбыл настоящим").split("\n").map((line, index) => (
-              <span key={index}>
-                {index > 0 && <br />}
-                {line}
-              </span>
-            ))}
-          </h2>
-          <p className="result__fact-text">
-            {fact?.text ||
-              "Перед стартом плей-офф КХЛ на Кинопоиске показали запуск корабля «Прогресс МС-33». В этот раз путь к Кубку Гагарина сопровождался настоящим полётом к звёздам."}
-          </p>
-          <Button onClick={onClose}>К Адвенту</Button>
+        <div className="result__card">
+          {(fact?.title || fact?.text || fact?.image) && (
+            <>
+              <div className="result__chip">Интересный факт</div>
+              <img className="result__cubes" src={fact?.image || cubes} alt="" />
+              {fact.title && (
+                <h2 className="result__fact-title">
+                  {fact.title.split("\n").map((line, index) => (
+                    <span key={index}>
+                      {index > 0 && <br />}
+                      {line}
+                    </span>
+                  ))}
+                </h2>
+              )}
+              {fact.text && <p className="result__fact-text">{fact.text}</p>}
+            </>
+          )}
+          <Button onClick={onClose}>{outcome === "missed" ? "К календарю" : "К Адвенту"}</Button>
         </div>
       )}
     </div>,

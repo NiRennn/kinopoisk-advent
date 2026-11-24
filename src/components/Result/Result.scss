@@ -369,11 +369,20 @@ body.is-mobile .result--win .result__logo,
 
   .result__headline {
     margin: 6px 0 0;
-    max-width: 290px;
+    max-width: 341px;
     font-family: "kinopoisk-semibold", sans-serif;
     font-size: 32px;
     font-weight: 400;
     line-height: 1;
+  }
+
+  .result__lead {
+    margin: 6px 0 0;
+    max-width: 341px;
+    font-family: "kinopoisk-regular", sans-serif;
+    font-size: 14px;
+    line-height: 1.15;
+    color: rgba(255, 255, 255, 0.92);
   }
 
   .result__card {
@@ -470,11 +479,20 @@ body.is-mobile .result--win .result__logo,
 
   .result__headline {
     margin: 6px 0 0;
-    max-width: 290px;
+    max-width: 341px;
     font-family: "kinopoisk-semibold", sans-serif;
     font-size: 32px;
     font-weight: 400;
     line-height: 1;
+  }
+
+  .result__lead {
+    margin: 6px 0 0;
+    max-width: 341px;
+    font-family: "kinopoisk-regular", sans-serif;
+    font-size: 14px;
+    line-height: 1.15;
+    color: rgba(255, 255, 255, 0.92);
   }
 
   .result__card {

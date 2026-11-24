@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import "./PastDay.scss";
 import Button from "../Button/Button";
 import cross from "../../assets/icons/cross.svg";
-import station from "../../assets/images/cells/ice-yandex1.png";
+import station from "../../assets/images/cells/ice-prize1.png";
 
 type PastDayProps = {
   image?: string | null;
@@ -52,7 +52,7 @@ function PastDay({ image, text, onClose, onOpen }: PastDayProps) {
           </h2>
           <p className="past__text">
             {text ||
-              "Lorem ipsum dolor sit amet consectetur. Donec orci ullamcorper sed diam in massa. Faucibus ullamcorper ac consequat feugiat sit viverra fringilla feugiat. Dui id eu netus at neque amet."}
+              "Итоги уже известны. Откройте их, чтобы узнать, повезло ли вам."}
           </p>
         </div>
         <Button onClick={onOpen}>Открыть итоги</Button>
