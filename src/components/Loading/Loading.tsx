@@ -43,7 +43,6 @@ function Loading() {
         days: [],
         botUrl: extra?.botUrl ?? "",
         user: extra?.user ?? null,
-        onboarding: false,
       })
       go()
     }
@@ -125,7 +124,6 @@ function Loading() {
         days: data.days.map(prepareDay),
         botUrl: data.bot_url,
         user: data.user,
-        onboarding: data.onboarding === true,
       })
       go()
     }

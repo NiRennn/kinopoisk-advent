@@ -1,0 +1,145 @@
+.share {
+  position: fixed;
+  z-index: 45;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-width: 500px;
+  margin-inline: auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 16px calc(var(--tg-safe-area-inset-bottom, 0px) + 20px);
+  animation: overlay-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.share--closing {
+  animation: overlay-out 0.42s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  pointer-events: none;
+}
+
+.share__veil {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.35);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.share__card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 51px 20px 20px;
+  border-radius: 40px;
+  background: #fff;
+  animation: sheet-in 0.68s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.share--closing .share__card {
+  animation: sheet-out 0.4s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+.share__close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 60px;
+  background: rgba(26, 26, 26, 0.06);
+
+  img {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.share__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: min(315px, 100%);
+  text-align: center;
+
+  h2 {
+    margin: 0;
+    font-family: "kinopoisk-semibold", sans-serif;
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1;
+    color: #000;
+  }
+
+  p {
+    margin: 0;
+    font-family: "kinopoisk-regular", sans-serif;
+    font-size: 14px;
+    line-height: 1.15;
+    color: #000;
+    opacity: 0.6;
+  }
+}
+
+.share__bolt {
+  width: 48px;
+  height: 48px;
+}
+
+.share__code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 70px;
+  margin: 18px 0 10px;
+  border: 1px dashed rgba(0, 0, 0, 0.16);
+  border-radius: 20px;
+  position: relative;
+
+  span {
+    font-family: "kinopoisk-regular", sans-serif;
+    font-size: 18px;
+    line-height: 1;
+    color: #000;
+  }
+
+    button {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    transform: translateY(-50%);
+
+    &:active {
+      transform: translateY(-50%) scale(0.985);
+    }
+
+    img {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+  }
+}
+
+.share .btn {
+  letter-spacing: -0.525px;
+}

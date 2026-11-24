@@ -46,9 +46,7 @@ function LaterDay({ date, onClose }: LaterDayProps) {
           <img className="later__icon" src={calendar} alt="" />
           <h2 className="later__title">Откроем {formatDayMonth(date)}</h2>
           <p className="later__text">
-            Lorem ipsum dolor sit amet consectetur. Donec orci ullamcorper sed
-            diam in massa. Faucibus ullamcorper ac consequat feugiat sit viverra
-            fringilla feugiat. Dui id eu netus at neque amet.
+            Этот кубик льда пока закрыт. Возвращайтесь {formatDayMonth(date)} за новым подарком.
           </p>
         </div>
         <Button onClick={close}>Подожду</Button>

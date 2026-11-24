@@ -4,35 +4,57 @@ import "../SecretGift/SecretGift.scss";
 import "./PartnerGift.scss";
 import Button from "../Button/Button";
 import logo from "../../assets/icons/kinopoisk.svg";
-import prize from "../../assets/images/cells/ice-zenit.png";
+import iceZenit from "../../assets/images/cells/ice-zenit.png";
+import station from "../../assets/images/cells/ice-yandex1.png";
+import cellRfc from "../../assets/images/cells/cell-rfc1.png";
+import cellKhl from "../../assets/images/cells/cell-khl1.png";
+import cellRuspace from "../../assets/images/cells/cell-ruspace1.png";
 import phone from "../../assets/images/cells/ice-iphone1.png";
 import hlop from "../../assets/icons/hlop.svg";
 import info from "../../assets/icons/info-orange.svg";
 import refresh from "../../assets/icons/sub-check.svg";
 import { ApiError } from "../../api/client";
+import type { PartnerKey } from "../../advent/cells";
+import { alreadyCopy, partnerOfferCopy, partnerSubscribeCopy } from "../../advent/format";
 
 type PartnerStep = "subscribe" | "checking" | "failed" | "gift";
+
+const MARK: Record<Exclude<PartnerKey, "zenit">, string> = {
+  rfc: cellRfc,
+  khl: cellKhl,
+  ruspace: cellRuspace,
+};
 
 type PartnerGiftProps = {
   joined: boolean;
   title: string;
-  text: string;
+  partnerName?: string | null;
+  mark?: PartnerKey | null;
   image?: string | null;
-  markImage?: string | null;
   resultsLabel: string;
+  resultsAt?: string | null;
   onSubscribe: () => void;
   onCheck: () => Promise<boolean>;
   onJoin: () => void | Promise<void>;
   onClose: () => void;
 };
 
+function prizePicture(title: string, image: string | null | undefined, mark: PartnerKey | null) {
+  if (mark === "zenit") return iceZenit;
+  if (image) return image;
+  if (/станц/i.test(title)) return station;
+  if (mark) return MARK[mark];
+  return station;
+}
+
 function PartnerGift({
   joined,
   title,
-  text,
+  partnerName,
+  mark = null,
   image,
-  markImage,
   resultsLabel,
+  resultsAt,
   onSubscribe,
   onCheck,
   onJoin,
@@ -41,7 +63,10 @@ function PartnerGift({
   const [step, setStep] = useState<PartnerStep>(joined ? "gift" : "subscribe");
   const [closing, setClosing] = useState(false);
   const [joining, setJoining] = useState(false);
+  const [celebrating, setCelebrating] = useState(false);
   const [error, setError] = useState("");
+  const confirmed = joined || celebrating;
+  const from = partnerName ? `Подарок от ${partnerName}` : "Подарок от партнера";
 
   const close = () => {
     if (closing) return;
@@ -61,11 +86,12 @@ function PartnerGift({
   };
 
   const join = async () => {
-    if (joining || closing) return;
+    if (joining || closing || confirmed) return;
     setJoining(true);
     setError("");
     try {
       await onJoin();
+      setCelebrating(true);
     } catch (reason) {
       if (reason instanceof ApiError && reason.code === "not_subscribed_partner") {
         setStep("failed");
@@ -78,10 +104,11 @@ function PartnerGift({
   };
 
   const gift = step === "gift";
+  const markPhoto = mark && mark !== "zenit" ? MARK[mark] : null;
 
   return createPortal(
     <div
-      className={`secret partner${gift && joined ? " secret--joined" : ""}${closing ? " secret--closing" : ""}`}
+      className={`secret partner${gift && confirmed ? " secret--joined" : ""}${closing ? " secret--closing" : ""}`}
       onTransitionEnd={(event) => {
         if (
           event.target === event.currentTarget &&
@@ -100,15 +127,13 @@ function PartnerGift({
         <div className="partner__alert">
           <img src={info} alt="" />
           <p>
-            Подписка не найдена,
-            <br />
-            повторите попытку
+            Подписка на канал клуба-партнёра пока не найдена. Проверьте подписку и попробуйте ещё раз
           </p>
         </div>
       )}
 
       {gift && (
-        <div className={`secret__toast${joined ? " partner__toast--in" : ""}`}>
+        <div className={`secret__toast${confirmed ? " partner__toast--in" : ""}`}>
           <img src={phone} alt="" />
           <p>
             +1 Шанс на розыгрыш
@@ -125,25 +150,38 @@ function PartnerGift({
         </div>
       ) : gift ? (
         <div className="secret__body">
-          <img className="secret__prize" src={image || prize} alt="" />
+          <div className="partner__hero">
+            <img className="secret__prize" src={prizePicture(title, image, mark)} alt="" />
+            {mark && (
+              <div
+                className={`partner__badge${markPhoto ? " partner__badge--photo" : ""}`}
+                style={markPhoto ? { backgroundImage: `url("${markPhoto}")` } : undefined}
+              />
+            )}
+          </div>
           <div className="secret__copy">
+            <p className="partner__from">{from}</p>
             <h1 className="secret__title">{title}</h1>
-            <p className="secret__text">{text}</p>
+            <p className="secret__text">
+              {confirmed ? alreadyCopy(resultsAt ?? null) : partnerOfferCopy(title, resultsAt ?? null)}
+            </p>
           </div>
         </div>
       ) : (
         <div className="secret__body">
-          <div
-            className={`partner__mark${markImage ? " partner__mark--photo" : ""}`}
-            style={markImage ? { backgroundImage: `url("${markImage}")` } : undefined}
-          />
+          {mark && (
+            <div
+              className={`partner__mark${markPhoto ? " partner__mark--photo" : ""}`}
+              style={markPhoto ? { backgroundImage: `url("${markPhoto}")` } : undefined}
+            />
+          )}
           <div className="secret__copy">
             <h1 className="secret__title">
-              Подпишитесь
+              Подпишитесь на канал
               <br />
-              на нашего партнера
+              клуба-партнера
             </h1>
-            <p className="secret__text">{text}</p>
+            <p className="secret__text">{partnerSubscribeCopy(title, partnerName ?? null)}</p>
           </div>
         </div>
       )}
@@ -151,7 +189,7 @@ function PartnerGift({
       <div className="secret__footer">
         {gift ? (
           <>
-            <div className={`secret__status${joined ? " partner__status--in" : ""}`}>
+            <div className={`secret__status${confirmed ? " partner__status--in" : ""}`}>
               <div className="secret__status-copy">
                 <p>Вы участвуете!</p>
                 <span>{resultsLabel}</span>
@@ -160,11 +198,11 @@ function PartnerGift({
             </div>
             {error && <p className="secret__error">{error}</p>}
             <Button
-              variant={joined ? "secondary" : "primary"}
+              variant={confirmed ? "secondary" : "primary"}
               loading={joining}
-              onClick={joined ? close : join}
+              onClick={confirmed ? close : join}
             >
-              {joined ? "Закрыть" : "Участвовать"}
+              {confirmed ? "Закрыть" : "Участвовать"}
             </Button>
           </>
         ) : (

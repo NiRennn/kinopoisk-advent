@@ -37,6 +37,21 @@ export function partnerKey(day: Day): PartnerKey | null {
   return PARTNER_DAY[dayOf(day.date)] ?? null
 }
 
+const PARTNER_NAME: Record<PartnerKey, string> = {
+  zenit: "«Зенит»",
+  rfc: "РФС",
+  khl: "КХЛ",
+  ruspace: "Роскосмос",
+}
+
+export function partnerLabel(day: Day) {
+  const key = partnerKey(day)
+  if (key) return PARTNER_NAME[key]
+  const title = day.partner?.title?.trim() ?? ""
+  if (!title || /^[a-z0-9_-]+$/i.test(title)) return null
+  return title
+}
+
 function nextDate(iso: string) {
   const [year, month, day] = iso.split("-").map(Number)
   const date = new Date(Date.UTC(year, month - 1, day + 1))

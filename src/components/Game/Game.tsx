@@ -13,14 +13,17 @@ import { ApiError } from "../../api/client"
 import { checkPartner, getDay, joinDay, openApp, submitWinnerForm } from "../../api/advent"
 import type { Day, WinnerForm } from "../../api/types"
 import { getAdventSession, prepareDay, type AdventPhase } from "../../advent/session"
-import { cellView, partnerKey } from "../../advent/cells"
+import { cellView, partnerKey, partnerLabel } from "../../advent/cells"
 import { dayOf, resultsLabel } from "../../advent/format"
 import { joinMockDay } from "../../advent/mock"
 import logo from "../../assets/icons/kinopoisk.svg"
 import info from "../../assets/icons/info-gray.svg"
 import bubble from "../../assets/images/bubble.png"
+import share from '../../assets/icons/share.svg'
+import ShareTrial from "../ShareTrial/ShareTrial"
 
 const SEEN_KEY = "kp-advent-seen-results"
+const ONBOARDING_KEY = "kp-advent-onboarding"
 
 type Modal =
   | { type: "gift" | "partner" | "later" | "past" | "result"; day: Day }
@@ -32,6 +35,22 @@ function readSeen() {
     return new Set(Array.isArray(parsed) ? parsed.filter((item) => typeof item === "string") : [])
   } catch {
     return new Set<string>()
+  }
+}
+
+function onboardingSeen() {
+  try {
+    return localStorage.getItem(ONBOARDING_KEY) === "1"
+  } catch {
+    return false
+  }
+}
+
+function markOnboardingSeen() {
+  try {
+    localStorage.setItem(ONBOARDING_KEY, "1")
+  } catch {
+    // Storage can be unavailable in private mode.
   }
 }
 
@@ -83,6 +102,7 @@ function Game() {
   const [botUrl, setBotUrl] = useState(initial?.botUrl ?? "")
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [showHint, setShowHint] = useState(false)
+  const [showShare, setShowShare] = useState(false)
   const openedToday = useRef(false)
   const introduced = useRef(false)
   const liveRef = useRef(initial?.live ?? false)
@@ -109,27 +129,11 @@ function Game() {
   }, [navigate])
 
   useEffect(() => {
-    localStorage.removeItem("kp-advent-onboarding")
     if (phase !== "ready" || introduced.current) return
     introduced.current = true
-    const action = pendingAction(days)
-    if (initial?.onboarding) {
-      pendingRef.current = action
-      setShowOnboarding(true)
-      return
-    }
-    if (!action) return
-    if (!liveRef.current || action.day.status === "future") {
-      setModal(screenFor(action.day, action.mode))
-      return
-    }
-    void getDay(action.day.date)
-      .then((full) => {
-        const next = prepareDay(full)
-        setDays((current) => current.map((item) => (item.date === next.date ? { ...item, ...next } : item)))
-        setModal(screenFor(next, action.mode))
-      })
-      .catch(() => setModal(screenFor(action.day, action.mode)))
+    if (onboardingSeen()) return
+    pendingRef.current = pendingAction(days)
+    setShowOnboarding(true)
   }, [phase])
 
   useEffect(() => {
@@ -173,7 +177,7 @@ function Game() {
   }, [])
 
   useEffect(() => {
-    if (showOnboarding || modal || phase !== "ready" || openedToday.current) {
+    if (showOnboarding || modal || showShare || phase !== "ready" || openedToday.current) {
       setShowHint(false)
       return
     }
@@ -195,7 +199,7 @@ function Game() {
       events.forEach((event) => window.removeEventListener(event, reset))
       node?.removeEventListener("scroll", reset)
     }
-  }, [showOnboarding, modal, phase])
+  }, [showOnboarding, modal, showShare, phase])
 
   const openCell = async (event: MouseEvent<HTMLDivElement>) => {
     const button = (event.target as HTMLElement).closest<HTMLButtonElement>(".game__content-field-item")
@@ -247,6 +251,7 @@ function Game() {
   }
 
   const finishOnboarding = () => {
+    markOnboardingSeen()
     setShowOnboarding(false)
     const action = pendingRef.current
     pendingRef.current = null
@@ -279,6 +284,7 @@ function Game() {
       {phase === "ready" && (
         <div className="game__content">
           <img src={logo} alt="" className="game__content-logo" />
+          <span className="game__content-header">Месяц подарков</span>
           <div className="game__content-field" onClick={openCell}>
             {days.map((item, index) => {
               const today = item.status === "today"
@@ -319,12 +325,20 @@ function Game() {
 
       {phase === "ready" && (
         <div className="game__blur">
+          <div className="game__blur-wrapper">
           <div className="game__blur-tip">
             <img src={info} alt="" className="game__blur-tip-img" />
-            <span className="game__blur-tip-text">Нажимайте на кубы льда каждый день, чтобы увидеть приз</span>
+            <span className="game__blur-tip-text">Нажимайте на кубики льда каждый день, чтобы увидеть приз, который будет разыгрываться сегодня</span>
           </div>
+          <button type="button" className="game__blur-share-btn" aria-label="Поделиться" onClick={() => setShowShare(true)}>
+            <img src={share} alt="" className="game__blur-share-btn-img"/>
+          </button>
+          </div>
+
         </div>
       )}
+
+      {showShare && <ShareTrial onClose={() => setShowShare(false)} />}
 
       {phase === "auth" && (
         <div className="game__gate">
@@ -357,6 +371,7 @@ function Game() {
           text={modal.day.prize?.text || ""}
           image={modal.day.prize?.image}
           resultsLabel={label}
+          resultsAt={modal.day.results_at}
           onJoin={() => participate(modal.day)}
           onClose={() => setModal(null)}
         />
@@ -366,10 +381,11 @@ function Game() {
         <PartnerGift
           joined={day.status === "joined" || day.participated}
           title={day.prize?.title || "Клубный мерч!"}
-          text={day.prize?.text || ""}
-          image={partnerKey(day) === "zenit" ? null : day.prize?.image}
-          markImage={partnerKey(day) === "zenit" ? null : day.prize?.image}
+          partnerName={partnerLabel(day)}
+          mark={partnerKey(day)}
+          image={day.prize?.image}
           resultsLabel={label}
+          resultsAt={day.results_at}
           onSubscribe={() => {
             if (!liveRef.current) {
               mockSub.current = true
@@ -405,7 +421,10 @@ function Game() {
           date={day.date}
           outcome={outcome}
           fact={day.fact}
+          prizeTitle={day.prize?.title}
+          prizeText={day.prize?.text}
           prizeImage={day.prize?.image}
+          prizeType={day.prize?.type}
           formRequired={day.winner?.form_required ?? false}
           formFilled={day.winner?.form_filled ?? false}
           promoCode={day.winner?.promo_code}

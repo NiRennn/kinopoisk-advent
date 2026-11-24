@@ -6,6 +6,7 @@ import logo from "../../assets/icons/kinopoisk.svg";
 import station from "../../assets/images/cells/ice-yandex1.png";
 import phone from "../../assets/images/cells/ice-iphone1.png";
 import hlop from "../../assets/icons/hlop.svg";
+import { alreadyCopy, joinedCopy } from "../../advent/format";
 
 type SecretGiftProps = {
   joined: boolean;
@@ -13,22 +14,26 @@ type SecretGiftProps = {
   text: string;
   image?: string | null;
   resultsLabel: string;
+  resultsAt?: string | null;
   onJoin: () => void | Promise<void>;
   onClose: () => void;
 };
 
-function SecretGift({ joined, title, text, image, resultsLabel, onJoin, onClose }: SecretGiftProps) {
+function SecretGift({ joined, title, image, resultsLabel, resultsAt, onJoin, onClose }: SecretGiftProps) {
   const [closing, setClosing] = useState(false);
   const [joining, setJoining] = useState(false);
+  const [celebrating, setCelebrating] = useState(false);
   const [error, setError] = useState("");
+  const returning = joined && !celebrating;
 
   const handleAction = async () => {
     if (closing || joining) return;
-    if (!joined) {
+    if (!joined && !celebrating) {
       setJoining(true);
       setError("");
       try {
         await onJoin();
+        setCelebrating(true);
       } catch {
         setError("Не получилось принять участие");
       } finally {
@@ -41,7 +46,7 @@ function SecretGift({ joined, title, text, image, resultsLabel, onJoin, onClose 
 
   return createPortal(
     <div
-      className={`secret${joined ? " secret--joined" : ""}${closing ? " secret--closing" : ""}`}
+      className={`secret${celebrating ? " secret--joined" : ""}${closing ? " secret--closing" : ""}`}
       onTransitionEnd={(event) => {
         if (
           event.target === event.currentTarget &&
@@ -70,14 +75,30 @@ function SecretGift({ joined, title, text, image, resultsLabel, onJoin, onClose 
         <img className="secret__prize" src={image || station} alt="" />
         <div className="secret__copy">
           <h1 className="secret__title">
-            {title.split("\n").map((line, index) => (
-              <span key={line}>
-                {index > 0 && <br />}
-                {line}
-              </span>
-            ))}
+            {celebrating ? "Вы участвуете!" : returning ? "Вы уже участвуете" : (
+              <>
+                Подарок дня —<br />
+                {title.split("\n").map((line, index) => (
+                  <span key={`${line}-${index}`}>
+                    {index > 0 && <br />}
+                    {line}
+                  </span>
+                ))}
+              </>
+            )}
           </h1>
-          <p className="secret__text">{text}</p>
+          <p className="secret__text">
+            {celebrating
+              ? joinedCopy(title, resultsAt ?? null)
+              : returning
+                ? alreadyCopy(resultsAt ?? null)
+                : <>Сегодня можно выиграть {title.split("\n").map((line, index) => (
+                  <span key={`${line}-${index}`}>
+                    {index > 0 && <br />}
+                    {line}
+                  </span>
+                ))}. Итоги розыгрыша — завтра в 12:00 МСК. Для участия достаточно нажать кнопку ниже</>}
+          </p>
         </div>
       </div>
 
@@ -91,11 +112,11 @@ function SecretGift({ joined, title, text, image, resultsLabel, onJoin, onClose 
         </div>
         {error && <p className="secret__error">{error}</p>}
         <Button
-          variant={joined ? "secondary" : "primary"}
+          variant={joined || celebrating ? "secondary" : "primary"}
           loading={joining}
           onClick={handleAction}
         >
-          {joined ? "Закрыть" : "Участвовать"}
+          {joined || celebrating ? "Вернуться в календарь" : "Участвовать"}
         </Button>
       </div>
     </div>,

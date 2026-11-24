@@ -9,7 +9,6 @@ export type AdventSession = {
   days: Day[]
   botUrl: string
   user: AdventUser | null
-  onboarding: boolean
 }
 
 let session: AdventSession | null = null

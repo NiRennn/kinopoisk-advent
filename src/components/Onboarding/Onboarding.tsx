@@ -39,20 +39,16 @@ function Onboarding({ onClose }: OnboardingProps) {
         <img className="onboarding__cubes" src={cubes} alt="" />
         <div className="onboarding__copy">
           <h1 className="onboarding__title">
-            Адвент-календарь
-            <br />
-            Кинопоиска
+            Месяц подарков
           </h1>
           <p className="onboarding__text">
-            Lorem ipsum dolor sit amet consectetur. Donec orci ullamcorper sed
-            diam in massa. Faucibus ullamcorper ac consequat feugiat sit viverra
-            fringilla feugiat. Dui id eu netus at neque amet.
+            Вспоминайте главные спортивные моменты года и участвуйте в розыгрышах каждый день. Каждое участие в новой ячейке добавляет шанс выиграть iPhone Duo 31 декабря.
           </p>
         </div>
       </div>
 
 
-      <Button variant="primary" onClick={close}>Открыть Адвент</Button>
+      <Button variant="primary" onClick={close}>Открыть календарь</Button>
     </div>,
     document.body,
   );

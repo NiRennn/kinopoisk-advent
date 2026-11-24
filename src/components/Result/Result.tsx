@@ -4,10 +4,9 @@ import "./Result.scss";
 import Button from "../Button/Button";
 import logo from "../../assets/icons/kinopoisk.svg";
 import check from "../../assets/icons/check.svg";
-import station from "../../assets/images/cells/ice-yandex1.png";
 import cubes from "../../assets/images/cells/cubes-123.png";
 import { ApiError } from "../../api/client";
-import type { Fact, WinnerForm } from "../../api/types";
+import type { Fact, Prize, WinnerForm } from "../../api/types";
 import { formatDayMonth } from "../../advent/format";
 
 export type ResultOutcome = "win" | "lose" | "missed";
@@ -16,7 +15,10 @@ type ResultProps = {
   date: string;
   outcome: ResultOutcome;
   fact?: Fact | null;
+  prizeTitle?: string | null;
+  prizeText?: string | null;
   prizeImage?: string | null;
+  prizeType?: Prize["type"] | null;
   formRequired?: boolean;
   formFilled?: boolean;
   promoCode?: string | null;
@@ -33,7 +35,10 @@ function Result({
   date,
   outcome,
   fact,
+  prizeTitle,
+  prizeText,
   prizeImage,
+  prizeType,
   formRequired = true,
   formFilled = false,
   promoCode,
@@ -48,6 +53,7 @@ function Result({
   const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
   const [consent, setConsent] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const ready =
     name.trim() !== "" &&
@@ -91,18 +97,47 @@ function Result({
     }
   };
 
-  const showPromo = Boolean(promoCode) && !formRequired;
+  const digital = prizeType === "digital" || (Boolean(promoCode) && !formRequired);
+  const title = prizeTitle?.trim() || "";
+  const conditions = prizeText?.trim() || "";
+
+  const copyCode = async () => {
+    if (!promoCode) return;
+    try {
+      await navigator.clipboard.writeText(promoCode);
+    } catch {
+      const input = document.createElement("textarea");
+      input.value = promoCode;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand("copy");
+      input.remove();
+    }
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1600);
+  };
 
   const fail = outcome === "lose" || outcome === "missed";
 
   return createPortal(
-    <div className={`result result--${outcome}${sent ? " result--sent" : ""}`}>
+    <div className={`result result--${outcome}${sent ? " result--sent" : ""}${digital ? " result--promo" : ""}`}>
       <div className="result__hero">
         {outcome === "win" && <img className="result__logo" src={logo} alt="Кинопоиск" />}
-        {outcome === "win" && <img className="result__prize" src={prizeImage || station} alt="" />}
+        {outcome === "win" && !digital && prizeImage && <img className="result__prize" src={prizeImage} alt="" />}
         <p className="result__date">Итоги розыгрыша от {formatDayMonth(date)}</p>
         {outcome === "win" ? (
-          <h1 className="result__headline">Вы победитель!</h1>
+          digital ? (
+            <>
+              <h1 className="result__headline">{title || "Вы выиграли!"}</h1>
+              <p className="result__lead">
+                {title
+                  ? `Поздравляем! Промокод на ${title} уже доступен. Скопируйте код и активируйте подписку по инструкции`
+                  : "Поздравляем! Промокод уже доступен. Скопируйте код и активируйте подписку по инструкции"}
+              </p>
+            </>
+          ) : (
+            <h1 className="result__headline">Вы выиграли!</h1>
+          )
         ) : (
           <h1 className="result__headline">
             {FAIL_TITLES[outcome][0]}
@@ -112,11 +147,11 @@ function Result({
         )}
       </div>
 
-      {outcome === "win" && !sent && !showPromo && (
+      {outcome === "win" && !digital && !sent && (
         <form className="result__sheet" onSubmit={submit}>
           <div className="result__intro">
-            <h2>Анкета победителя</h2>
-            <p>Оставьте ваши данные, чтобы мы могли отправить вам ваш приз</p>
+            <h2>{title ? <>Ваш приз —<br />{title}</> : "Ваш приз"}</h2>
+            <p>Поздравляем! Укажите данные, чтобы мы могли связаться с вами и отправить подарок</p>
           </div>
 
           <label className="result__field">
@@ -182,28 +217,28 @@ function Result({
         </form>
       )}
 
-      {outcome === "win" && showPromo && (
-        <div className="result__sheet result__sheet--sent">
-          <div className="result__sent">
+      {outcome === "win" && digital && (
+        <div className="result__sheet result__sheet--promo">
+          <div className="result__promo">
             <h2>Ваш промокод</h2>
-            <p className="result__code">{promoCode}</p>
+            {conditions && <p>Срок действия и условия активации: {conditions}</p>}
+            {promoCode && <div className="result__codebox">{copied ? "Скопировано" : promoCode}</div>}
           </div>
-          <Button onClick={onClose}>К Адвенту</Button>
+          <div className="result__promo-actions">
+            {promoCode && <Button onClick={copyCode}>Скопировать код</Button>}
+            <Button variant="secondary" onClick={onClose}>Закрыть</Button>
+          </div>
         </div>
       )}
 
-      {outcome === "win" && sent && !showPromo && (
+      {outcome === "win" && sent && !digital && (
         <div className="result__sheet result__sheet--sent">
           <div className="result__sent">
             <img src={check} alt="" />
             <h2>Анкета отправлена!</h2>
-            <p>
-              Lorem ipsum dolor sit amet consectetur. Donec orci ullamcorper sed
-              diam in massa. Faucibus ullamcorper ac consequat feugiat sit
-              viverra fringilla feugiat. Dui id eu netus at neque amet.
-            </p>
+            <p>Спасибо! Данные для получения приза сохранены. Если понадобятся уточнения, с вами свяжутся.</p>
           </div>
-          <Button onClick={onClose}>К Адвенту</Button>
+          <Button onClick={onClose}>К календарю</Button>
         </div>
       )}
 

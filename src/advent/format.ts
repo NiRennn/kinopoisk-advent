@@ -70,3 +70,71 @@ export function resultsLabel(iso: string | null, result: string | null) {
   if (isTomorrow) return `Итоги завтра в ${when.hm} МСК`
   return `Итоги ${when.d} ${MONTHS[when.m - 1]} в ${when.hm} МСК`
 }
+
+export function joinedCopy(title: string, iso: string | null) {
+  const prize = title.replace(/\s*\n\s*/g, " ").trim() || "приз"
+  const tail = "Когда они будут готовы, в Telegram придет уведомление."
+  if (!iso) return `Вы участвуете в розыгрыше ${prize}! Итоги появятся скоро. ${tail}`
+
+  const when = moscowDate(iso)
+  const now = moscowDate(new Date().toISOString())
+  const whenStamp = Date.UTC(when.y, when.m - 1, when.d)
+  const nowStamp = Date.UTC(now.y, now.m - 1, now.d)
+  const tomorrow = new Date(nowStamp + 86_400_000)
+  const isTomorrow =
+    when.y === tomorrow.getUTCFullYear() &&
+    when.m === tomorrow.getUTCMonth() + 1 &&
+    when.d === tomorrow.getUTCDate()
+  const date = `${when.d} ${MONTHS[when.m - 1]}`
+  const whenText = isTomorrow ? `завтра, ${date}, после ${when.hm} МСК` : `${date}, после ${when.hm} МСК`
+
+  if ((whenStamp < nowStamp)) return `Вы участвуете в розыгрыше ${prize}! Итоги появятся скоро. ${tail}`
+  return `Вы участвуете в розыгрыше ${prize}! Итоги появятся ${whenText}. ${tail}`
+}
+
+export function alreadyCopy(iso: string | null) {
+  const lead = "Вы уже участвуете в этом розыгрыше. Повторно ничего делать не нужно. Итоги — "
+  if (!iso) return `${lead}скоро.`
+
+  const when = moscowDate(iso)
+  const now = moscowDate(new Date().toISOString())
+  const whenStamp = Date.UTC(when.y, when.m - 1, when.d)
+  const nowStamp = Date.UTC(now.y, now.m - 1, now.d)
+  if (whenStamp < nowStamp) return `${lead}скоро.`
+
+  const tomorrow = new Date(nowStamp + 86_400_000)
+  const isTomorrow =
+    when.y === tomorrow.getUTCFullYear() &&
+    when.m === tomorrow.getUTCMonth() + 1 &&
+    when.d === tomorrow.getUTCDate()
+  const whenText = isTomorrow ? `завтра в ${when.hm}` : `${when.d} ${MONTHS[when.m - 1]} в ${when.hm}`
+  return `${lead}${whenText} МСК.`
+}
+
+function resultsClock(iso: string | null) {
+  if (!iso) return null
+  const when = moscowDate(iso)
+  const now = moscowDate(new Date().toISOString())
+  const whenStamp = Date.UTC(when.y, when.m - 1, when.d)
+  const nowStamp = Date.UTC(now.y, now.m - 1, now.d)
+  if (whenStamp < nowStamp) return null
+  const tomorrow = new Date(nowStamp + 86_400_000)
+  const isTomorrow =
+    when.y === tomorrow.getUTCFullYear() &&
+    when.m === tomorrow.getUTCMonth() + 1 &&
+    when.d === tomorrow.getUTCDate()
+  if (isTomorrow) return `завтра в ${when.hm}`
+  return `${when.d} ${MONTHS[when.m - 1]} в ${when.hm}`
+}
+
+export function partnerOfferCopy(title: string, iso: string | null) {
+  const prize = title.replace(/\s*\n\s*/g, " ").trim() || "приз"
+  const when = resultsClock(iso)
+  return `Сегодня разыгрывается ${prize}. Условие участия — подписка на канал клуба-партнера. Итоги — ${when ? `${when} МСК` : "скоро"}.`
+}
+
+export function partnerSubscribeCopy(title: string, partner: string | null) {
+  const prize = title.replace(/\s*\n\s*/g, " ").trim() || "приз"
+  const club = partner ? ` ${partner}` : ""
+  return `Чтобы получить возможность выиграть ${prize}, подпишитесь на канал клуба-партнера${club}. После подписки можно сразу проверить выполнение условия.`
+}
