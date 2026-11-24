@@ -280,11 +280,11 @@ function Game() {
         <div className="game__content">
           <img src={logo} alt="" className="game__content-logo" />
           <div className="game__content-field" onClick={openCell}>
-            {days.map((item) => {
+            {days.map((item, index) => {
               const today = item.status === "today"
               const view = cellView(item, days)
               const numberOpen = item.status !== "future"
-              const hintMirror = today && dayOf(item.date) % 3 === 0
+              const hintMirror = today && index % 3 === 2
               return (
                 <button
                   key={item.date}
