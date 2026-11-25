@@ -124,6 +124,7 @@ function Game() {
   const logoRef = useRef<HTMLImageElement>(null)
   const barRef = useRef<HTMLDivElement>(null)
   const revealed = useRef(false)
+  const [cellsReady, setCellsReady] = useState(false)
 
   const mergeDay = (day: Day) => {
     const next = prepareDay(day)
@@ -221,6 +222,7 @@ function Game() {
   }, [showOnboarding, modal, showShare, phase])
 
   const openCell = async (event: MouseEvent<HTMLDivElement>) => {
+    if (!revealed.current) return
     const button = (event.target as HTMLElement).closest<HTMLButtonElement>(".game__content-field-item")
     const date = button?.dataset.date
     if (!date) return
@@ -294,7 +296,10 @@ function Game() {
   }
 
   useLayoutEffect(() => {
-    if (revealed.current) return
+    if (revealed.current) {
+      setCellsReady(true)
+      return
+    }
     if (phase !== "ready" || !revealGrid || showOnboarding || modal) return
     const field = fieldRef.current
     if (!field) return
@@ -303,10 +308,12 @@ function Game() {
     const timeline = revealCalendar(cells, headerRef.current, logoRef.current, barRef.current)
     if (timeline.duration() === 0) {
       revealed.current = true
+      setCellsReady(true)
       return
     }
     timeline.eventCallback("onComplete", () => {
       revealed.current = true
+      setCellsReady(true)
     })
     return () => {
       timeline.kill()
@@ -353,7 +360,11 @@ function Game() {
         <div className="game__content">
           <img ref={logoRef} src={logo} alt="" className="game__content-logo" />
           <span ref={headerRef} className="game__content-header">Месяц подарков</span>
-          <div ref={fieldRef} className="game__content-field" onClick={openCell}>
+          <div
+            ref={fieldRef}
+            className={`game__content-field${cellsReady ? "" : " game__content-field--locked"}`}
+            onClick={openCell}
+          >
             {days.map((item, index) => {
               const today = item.status === "today"
               const view = cellView(item, days)

@@ -72,6 +72,10 @@ body.is-mobile .game__content-logo,
   padding-bottom: 130px;
 }
 
+.game__content-field--locked {
+  pointer-events: none;
+}
+
 .game__content-field-item--hint {
   z-index: 4;
 }
