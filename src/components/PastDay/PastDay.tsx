@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useTelegramBackButton } from "../../utils/telegramBack";
 import { createPortal } from "react-dom";
 import "./PastDay.scss";
 import Button from "../Button/Button";
 import cross from "../../assets/icons/cross.svg";
 import station from "../../assets/images/cells/ice-prize1.png";
+import { formatNbsp } from "../../utils/typography";
 
 type PastDayProps = {
   image?: string | null;
@@ -19,6 +21,7 @@ function PastDay({ image, text, onClose, onOpen }: PastDayProps) {
     if (closing) return;
     setClosing(true);
   };
+  useTelegramBackButton(close);
 
   return createPortal(
     <div
@@ -51,8 +54,7 @@ function PastDay({ image, text, onClose, onOpen }: PastDayProps) {
             известны
           </h2>
           <p className="past__text">
-            {text ||
-              "Итоги уже известны. Откройте их, чтобы узнать, повезло ли вам."}
+            {formatNbsp(text || "Итоги уже известны. Откройте их, чтобы узнать, повезло ли вам.")}
           </p>
         </div>
         <Button onClick={onOpen}>Открыть итоги</Button>

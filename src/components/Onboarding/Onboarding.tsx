@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useTelegramBackButton } from "../../utils/telegramBack";
 import { createPortal } from "react-dom";
 import "./Onboarding.scss";
 import cubes from "../../assets/images/cubes.png";
 import logo from "../../assets/icons/kinopoisk.svg";
 import Button from "../Button/Button";
+import { formatNbsp } from "../../utils/typography";
 
 type OnboardingProps = {
   onClose: () => void;
@@ -16,6 +18,7 @@ function Onboarding({ onClose }: OnboardingProps) {
     if (closing) return;
     setClosing(true);
   };
+  useTelegramBackButton(close);
 
   return createPortal(
     <div
@@ -42,7 +45,7 @@ function Onboarding({ onClose }: OnboardingProps) {
             Месяц подарков
           </h1>
           <p className="onboarding__text">
-            Вспоминайте главные спортивные моменты года и участвуйте в розыгрышах каждый день. Каждое участие в новой ячейке добавляет шанс выиграть iPhone Duo 31 декабря.
+            {formatNbsp("Вспоминайте главные спортивные моменты года и участвуйте в розыгрышах каждый день. Каждое участие в новой ячейке добавляет шанс выиграть iPhone Duo 31 декабря.")}
           </p>
         </div>
       </div>

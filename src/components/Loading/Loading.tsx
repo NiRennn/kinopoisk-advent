@@ -9,7 +9,7 @@ import { getTelegramInitData } from "../../api/telegramAuth"
 import { ApiError } from "../../api/client"
 import { openApp } from "../../api/advent"
 import type { AdventUser } from "../../api/types"
-import { prepareDay, setAdventSession, type AdventPhase } from "../../advent/session"
+import { prepareDay, presentCode, setAdventSession, type AdventPhase } from "../../advent/session"
 import { initTelegramPlatformAndSafeArea, isMobileTelegram } from "../../utils/telegramPlatform"
 
 const MIN_LOADING_DELAY = 3000
@@ -42,6 +42,7 @@ function Loading() {
         phase,
         days: [],
         botUrl: extra?.botUrl ?? "",
+        trialCode: null,
         user: extra?.user ?? null,
       })
       go()
@@ -123,6 +124,7 @@ function Loading() {
         phase: "ready",
         days: data.days.map(prepareDay),
         botUrl: data.bot_url,
+        trialCode: presentCode(data.trial?.code),
         user: data.user,
       })
       go()

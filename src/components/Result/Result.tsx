@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { useTelegramBackButton } from "../../utils/telegramBack";
 import { createPortal } from "react-dom";
 import "./Result.scss";
 import Button from "../Button/Button";
@@ -8,6 +9,7 @@ import cubes from "../../assets/images/cells/cubes-123.png";
 import { ApiError } from "../../api/client";
 import type { Fact, Prize, WinnerForm } from "../../api/types";
 import { formatDayMonth } from "../../advent/format";
+import { formatNbsp } from "../../utils/typography";
 
 export type ResultOutcome = "win" | "lose" | "missed";
 
@@ -32,8 +34,8 @@ const FAIL_TITLES: Record<Exclude<ResultOutcome, "win">, string[]> = {
 };
 
 const FAIL_LEAD: Record<Exclude<ResultOutcome, "win">, string> = {
-  lose: "Сегодня удача улыбнулась кому-то другому. Но этот день тоже может подарить эмоции — вот одна из самых ярких историй этого спортивного года.",
-  missed: "Прием заявок на этот день завершен. Зато впереди еще новые подарки!",
+  lose: formatNbsp("Сегодня удача улыбнулась кому-то другому. Но этот день тоже может подарить эмоции — вот одна из самых ярких историй этого спортивного года."),
+  missed: formatNbsp("Прием заявок на этот день завершен. Зато впереди еще новые подарки!"),
 };
 
 function Result({
@@ -59,6 +61,7 @@ function Result({
   const [address, setAddress] = useState("");
   const [consent, setConsent] = useState(false);
   const [copied, setCopied] = useState(false);
+  useTelegramBackButton(onClose);
 
   const ready =
     name.trim() !== "" &&
@@ -129,15 +132,17 @@ function Result({
       <div className="result__hero">
         {outcome === "win" && <img className="result__logo" src={logo} alt="Кинопоиск" />}
         {outcome === "win" && !digital && prizeImage && <img className="result__prize" src={prizeImage} alt="" />}
-        {outcome !== "missed" && <p className="result__date">Итоги розыгрыша от {formatDayMonth(date)}</p>}
+        {outcome !== "missed" && <p className="result__date">{formatNbsp(`Итоги розыгрыша от ${formatDayMonth(date)}`)}</p>}
         {outcome === "win" ? (
           digital ? (
             <>
-              <h1 className="result__headline">{title || "Вы выиграли!"}</h1>
+              <h1 className="result__headline">{formatNbsp(title || "Вы выиграли!")}</h1>
               <p className="result__lead">
-                {title
-                  ? `Поздравляем! Промокод на ${title} уже доступен. Скопируйте код и активируйте подписку по инструкции`
-                  : "Поздравляем! Промокод уже доступен. Скопируйте код и активируйте подписку по инструкции"}
+                {formatNbsp(
+                  title
+                    ? `Поздравляем! Промокод на ${title} уже доступен. Скопируйте код и активируйте подписку по инструкции`
+                    : "Поздравляем! Промокод уже доступен. Скопируйте код и активируйте подписку по инструкции",
+                )}
               </p>
             </>
           ) : (
@@ -159,7 +164,7 @@ function Result({
         <form className="result__sheet" onSubmit={submit}>
           <div className="result__intro">
             <h2>{title ? <>Ваш приз —<br />{title}</> : "Ваш приз"}</h2>
-            <p>Поздравляем! Укажите данные, чтобы мы могли связаться с вами и отправить подарок</p>
+            <p>{formatNbsp("Поздравляем! Укажите данные, чтобы мы могли связаться с вами и отправить подарок")}</p>
           </div>
 
           <label className="result__field">
@@ -229,7 +234,7 @@ function Result({
         <div className="result__sheet result__sheet--promo">
           <div className="result__promo">
             <h2>Ваш промокод</h2>
-            {conditions && <p>Срок действия и условия активации: {conditions}</p>}
+            {conditions && <p>{formatNbsp(`Срок действия и условия активации: ${conditions}`)}</p>}
             {promoCode && <div className="result__codebox">{copied ? "Скопировано" : promoCode}</div>}
           </div>
           <div className="result__promo-actions">
@@ -244,7 +249,7 @@ function Result({
           <div className="result__sent">
             <img src={check} alt="" />
             <h2>Анкета отправлена!</h2>
-            <p>Спасибо! Данные для получения приза сохранены. Если понадобятся уточнения, с вами свяжутся.</p>
+            <p>{formatNbsp("Спасибо! Данные для получения приза сохранены. Если понадобятся уточнения, с вами свяжутся.")}</p>
           </div>
           <Button onClick={onClose}>К календарю</Button>
         </div>
@@ -261,12 +266,12 @@ function Result({
                   {fact.title.split("\n").map((line, index) => (
                     <span key={index}>
                       {index > 0 && <br />}
-                      {line}
+                      {formatNbsp(line)}
                     </span>
                   ))}
                 </h2>
               )}
-              {fact.text && <p className="result__fact-text">{fact.text}</p>}
+              {fact.text && <p className="result__fact-text">{formatNbsp(fact.text)}</p>}
             </>
           )}
           <Button onClick={onClose}>{outcome === "missed" ? "К календарю" : "К Адвенту"}</Button>

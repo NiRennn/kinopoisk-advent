@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useTelegramBackButton } from "../../utils/telegramBack"
 import { createPortal } from "react-dom"
 import "../SecretGift/SecretGift.scss"
 import "./FinalGift.scss"
@@ -8,6 +9,7 @@ import phone from "../../assets/images/cells/ice-iphone1.png"
 import hlop from "../../assets/icons/hlop.svg"
 import cross from "../../assets/icons/cross.svg"
 import { finalWhen } from "../../advent/format"
+import { formatNbsp } from "../../utils/typography"
 
 type FinalGiftProps = {
   joined: boolean
@@ -47,6 +49,7 @@ function FinalGift({
     if (closing || joining) return
     setClosing(true)
   }
+  useTelegramBackButton(close)
 
   const join = async () => {
     if (closing || joining) return
@@ -85,12 +88,14 @@ function FinalGift({
           {won && <img className="final-sheet__prize" src={picture} alt="" />}
           <div className="final-sheet__copy">
             <h2 className="final-sheet__title">
-              {won ? `Вы выиграли ${prize}!` : "Спасибо, что были с нами!"}
+              {formatNbsp(won ? `Вы выиграли ${prize}!` : "Спасибо, что были с нами!")}
             </h2>
             <p className="final-sheet__text">
-              {won
-                ? "Поздравляем с главным подарком адвента! Для получения приза заполните данные для доставки в Telegram-боте"
-                : "В этот раз главный приз достался другому участнику. Спасибо за месяц спортивных историй и розыгрышей на Кинопоиске!"}
+              {formatNbsp(
+                won
+                  ? "Поздравляем с главным подарком адвента! Для получения приза заполните данные для доставки в Telegram-боте"
+                  : "В этот раз главный приз достался другому участнику. Спасибо за месяц спортивных историй и розыгрышей на Кинопоиске!",
+              )}
             </p>
           </div>
           {won ? (
@@ -125,12 +130,14 @@ function FinalGift({
         <img className="secret__prize" src={picture} alt="" />
         <div className="secret__copy">
           <h1 className="secret__title">
-            {confirmed ? "Вы участвуете в главном розыгрыше!" : `Сегодня разыгрываем ${prize}!`}
+            {formatNbsp(confirmed ? "Вы участвуете в главном розыгрыше!" : `Сегодня разыгрываем ${prize}!`)}
           </h1>
           <p className="secret__text">
-            {confirmed
-              ? `Вы участвуете в главном розыгрыше! Итоги — ${when}. После розыгрыша в Telegram придет уведомление`
-              : `Сегодня — главный розыгрыш месяца! За каждый новый день участия в декабрьских розыгрышах вы получали дополнительный шанс на ${prize}. Чем больше дней участвовали, тем выше шанс выиграть. Итоги — ${when}`}
+            {formatNbsp(
+              confirmed
+                ? `Вы участвуете в главном розыгрыше! Итоги — ${when}. После розыгрыша в Telegram придет уведомление`
+                : `Сегодня — главный розыгрыш месяца! За каждый новый день участия в декабрьских розыгрышах вы получали дополнительный шанс на ${prize}. Чем больше дней участвовали, тем выше шанс выиграть. Итоги — ${when}`,
+            )}
           </p>
         </div>
       </div>

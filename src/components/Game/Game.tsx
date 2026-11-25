@@ -13,9 +13,10 @@ import Button from "../Button/Button"
 import { ApiError } from "../../api/client"
 import { checkPartner, getDay, joinDay, openApp, submitWinnerForm } from "../../api/advent"
 import type { Day, WinnerForm } from "../../api/types"
-import { getAdventSession, prepareDay, type AdventPhase } from "../../advent/session"
+import { getAdventSession, prepareDay, presentCode, type AdventPhase } from "../../advent/session"
 import { cellView, partnerKey, partnerLabel } from "../../advent/cells"
 import { dayOf, resultsLabel } from "../../advent/format"
+import { formatNbsp } from "../../utils/typography"
 import { joinMockDay } from "../../advent/mock"
 import logo from "../../assets/icons/kinopoisk.svg"
 import info from "../../assets/icons/info-gray.svg"
@@ -105,6 +106,7 @@ function Game() {
   const [days, setDays] = useState<Day[]>(initial?.days ?? [])
   const [modal, setModal] = useState<Modal>(null)
   const [botUrl, setBotUrl] = useState(initial?.botUrl ?? "")
+  const [trialCode, setTrialCode] = useState<string | null>(initial?.trialCode ?? null)
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [showHint, setShowHint] = useState(false)
   const [showShare, setShowShare] = useState(false)
@@ -150,6 +152,7 @@ function Game() {
         const data = await openApp()
         if (cancelled) return
         setBotUrl(data.bot_url)
+        setTrialCode(presentCode(data.trial?.code))
         if (!data.subscribed) {
           setPhase("subscribe")
           return
@@ -333,17 +336,19 @@ function Game() {
           <div className="game__blur-wrapper">
           <div className="game__blur-tip">
             <img src={info} alt="" className="game__blur-tip-img" />
-            <span className="game__blur-tip-text">Нажимайте на кубики льда каждый день, чтобы увидеть приз, который будет разыгрываться сегодня</span>
+            <span className="game__blur-tip-text">{formatNbsp("Нажимайте на кубики льда каждый день, чтобы увидеть приз, который будет разыгрываться сегодня")}</span>
           </div>
-          <button type="button" className="game__blur-share-btn" aria-label="Поделиться" onClick={() => setShowShare(true)}>
-            <img src={share} alt="" className="game__blur-share-btn-img"/>
-          </button>
+          {trialCode && (
+            <button type="button" className="game__blur-share-btn" aria-label="Поделиться" onClick={() => setShowShare(true)}>
+              <img src={share} alt="" className="game__blur-share-btn-img"/>
+            </button>
+          )}
           </div>
 
         </div>
       )}
 
-      {showShare && <ShareTrial onClose={() => setShowShare(false)} />}
+      {showShare && trialCode && <ShareTrial code={trialCode} onClose={() => setShowShare(false)} />}
 
       {phase === "auth" && (
         <div className="game__gate">

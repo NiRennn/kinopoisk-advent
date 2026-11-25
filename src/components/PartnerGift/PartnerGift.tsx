@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTelegramBackButton } from "../../utils/telegramBack";
 import { createPortal } from "react-dom";
 import "../SecretGift/SecretGift.scss";
 import "./PartnerGift.scss";
@@ -16,6 +17,7 @@ import refresh from "../../assets/icons/sub-check.svg";
 import { ApiError } from "../../api/client";
 import type { PartnerKey } from "../../advent/cells";
 import { alreadyCopy, partnerOfferCopy, partnerSubscribeCopy } from "../../advent/format";
+import { formatNbsp } from "../../utils/typography";
 
 type PartnerStep = "subscribe" | "checking" | "failed" | "gift";
 
@@ -72,6 +74,7 @@ function PartnerGift({
     if (closing) return;
     setClosing(true);
   };
+  useTelegramBackButton(close);
 
   const check = async () => {
     if (step === "checking" || closing) return;
@@ -127,7 +130,7 @@ function PartnerGift({
         <div className="partner__alert">
           <img src={info} alt="" />
           <p>
-            Подписка на канал клуба-партнёра пока не найдена. Проверьте подписку и попробуйте ещё раз
+            {formatNbsp("Подписка на канал клуба-партнёра пока не найдена. Проверьте подписку и попробуйте ещё раз")}
           </p>
         </div>
       )}
@@ -160,8 +163,8 @@ function PartnerGift({
             )}
           </div>
           <div className="secret__copy">
-            <p className="partner__from">{from}</p>
-            <h1 className="secret__title">{title}</h1>
+            <p className="partner__from">{formatNbsp(from)}</p>
+            <h1 className="secret__title">{formatNbsp(title)}</h1>
             <p className="secret__text">
               {confirmed ? alreadyCopy(resultsAt ?? null) : partnerOfferCopy(title, resultsAt ?? null)}
             </p>

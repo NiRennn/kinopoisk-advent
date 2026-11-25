@@ -1,3 +1,5 @@
+import { formatNbsp } from "../utils/typography"
+
 const MONTHS = [
   "января",
   "февраля",
@@ -44,13 +46,13 @@ export function dayOf(date: string) {
 
 export function formatDayMonth(value: string) {
   const calendar = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
-  if (calendar) return `${Number(calendar[3])} ${MONTHS[Number(calendar[2]) - 1]}`
+  if (calendar) return formatNbsp(`${Number(calendar[3])} ${MONTHS[Number(calendar[2]) - 1]}`)
   const when = moscowDate(value)
-  return `${when.d} ${MONTHS[when.m - 1]}`
+  return formatNbsp(`${when.d} ${MONTHS[when.m - 1]}`)
 }
 
 export function resultsLabel(iso: string | null, result: string | null) {
-  if (!iso) return "Итоги скоро"
+  if (!iso) return formatNbsp("Итоги скоро")
 
   const when = moscowDate(iso)
   const now = moscowDate(new Date().toISOString())
@@ -58,7 +60,7 @@ export function resultsLabel(iso: string | null, result: string | null) {
   const nowStamp = Date.UTC(now.y, now.m - 1, now.d)
 
   if ((result === "pending" || result === null) && whenStamp < nowStamp) {
-    return "Итоги скоро"
+    return formatNbsp("Итоги скоро")
   }
 
   const tomorrow = new Date(nowStamp + 86_400_000)
@@ -67,12 +69,12 @@ export function resultsLabel(iso: string | null, result: string | null) {
     when.m === tomorrow.getUTCMonth() + 1 &&
     when.d === tomorrow.getUTCDate()
 
-  if (isTomorrow) return `Итоги завтра в ${when.hm} МСК`
-  return `Итоги ${when.d} ${MONTHS[when.m - 1]} в ${when.hm} МСК`
+  if (isTomorrow) return formatNbsp(`Итоги завтра в ${when.hm} МСК`)
+  return formatNbsp(`Итоги ${when.d} ${MONTHS[when.m - 1]} в ${when.hm} МСК`)
 }
 
 export function finalWhen(iso: string | null) {
-  if (!iso) return "скоро"
+  if (!iso) return formatNbsp("скоро")
   const when = moscowDate(iso)
   const now = moscowDate(new Date().toISOString())
   const whenStamp = Date.UTC(when.y, when.m - 1, when.d)
@@ -84,15 +86,15 @@ export function finalWhen(iso: string | null) {
     when.m === tomorrow.getUTCMonth() + 1 &&
     when.d === tomorrow.getUTCDate()
   const date = `${when.d} ${MONTHS[when.m - 1]}`
-  if (isToday) return `сегодня, ${date}, в ${when.hm} МСК`
-  if (isTomorrow) return `завтра, ${date}, в ${when.hm} МСК`
-  return `${date}, в ${when.hm} МСК`
+  if (isToday) return formatNbsp(`сегодня, ${date}, в ${when.hm} МСК`)
+  if (isTomorrow) return formatNbsp(`завтра, ${date}, в ${when.hm} МСК`)
+  return formatNbsp(`${date}, в ${when.hm} МСК`)
 }
 
 export function joinedCopy(title: string, iso: string | null) {
   const prize = title.replace(/\s*\n\s*/g, " ").trim() || "приз"
   const tail = "Когда они будут готовы, в Telegram придет уведомление."
-  if (!iso) return `Вы участвуете в розыгрыше ${prize}! Итоги появятся скоро. ${tail}`
+  if (!iso) return formatNbsp(`Вы участвуете в розыгрыше ${prize}! Итоги появятся скоро. ${tail}`)
 
   const when = moscowDate(iso)
   const now = moscowDate(new Date().toISOString())
@@ -106,19 +108,19 @@ export function joinedCopy(title: string, iso: string | null) {
   const date = `${when.d} ${MONTHS[when.m - 1]}`
   const whenText = isTomorrow ? `завтра, ${date}, после ${when.hm} МСК` : `${date}, после ${when.hm} МСК`
 
-  if ((whenStamp < nowStamp)) return `Вы участвуете в розыгрыше ${prize}! Итоги появятся скоро. ${tail}`
-  return `Вы участвуете в розыгрыше ${prize}! Итоги появятся ${whenText}. ${tail}`
+  if ((whenStamp < nowStamp)) return formatNbsp(`Вы участвуете в розыгрыше ${prize}! Итоги появятся скоро. ${tail}`)
+  return formatNbsp(`Вы участвуете в розыгрыше ${prize}! Итоги появятся ${whenText}. ${tail}`)
 }
 
 export function alreadyCopy(iso: string | null) {
   const lead = "Вы уже участвуете в этом розыгрыше. Повторно ничего делать не нужно. Итоги — "
-  if (!iso) return `${lead}скоро.`
+  if (!iso) return formatNbsp(`${lead}скоро.`)
 
   const when = moscowDate(iso)
   const now = moscowDate(new Date().toISOString())
   const whenStamp = Date.UTC(when.y, when.m - 1, when.d)
   const nowStamp = Date.UTC(now.y, now.m - 1, now.d)
-  if (whenStamp < nowStamp) return `${lead}скоро.`
+  if (whenStamp < nowStamp) return formatNbsp(`${lead}скоро.`)
 
   const tomorrow = new Date(nowStamp + 86_400_000)
   const isTomorrow =
@@ -126,7 +128,7 @@ export function alreadyCopy(iso: string | null) {
     when.m === tomorrow.getUTCMonth() + 1 &&
     when.d === tomorrow.getUTCDate()
   const whenText = isTomorrow ? `завтра в ${when.hm}` : `${when.d} ${MONTHS[when.m - 1]} в ${when.hm}`
-  return `${lead}${whenText} МСК.`
+  return formatNbsp(`${lead}${whenText} МСК.`)
 }
 
 function resultsClock(iso: string | null) {
@@ -148,11 +150,11 @@ function resultsClock(iso: string | null) {
 export function partnerOfferCopy(title: string, iso: string | null) {
   const prize = title.replace(/\s*\n\s*/g, " ").trim() || "приз"
   const when = resultsClock(iso)
-  return `Сегодня разыгрывается ${prize}. Условие участия — подписка на канал клуба-партнера. Итоги — ${when ? `${when} МСК` : "скоро"}.`
+  return formatNbsp(`Сегодня разыгрывается ${prize}. Условие участия — подписка на канал клуба-партнера. Итоги — ${when ? `${when} МСК` : "скоро"}.`)
 }
 
 export function partnerSubscribeCopy(title: string, partner: string | null) {
   const prize = title.replace(/\s*\n\s*/g, " ").trim() || "приз"
   const club = partner ? ` ${partner}` : ""
-  return `Чтобы получить возможность выиграть ${prize}, подпишитесь на канал клуба-партнера${club}. После подписки можно сразу проверить выполнение условия.`
+  return formatNbsp(`Чтобы получить возможность выиграть ${prize}, подпишитесь на канал клуба-партнера${club}. После подписки можно сразу проверить выполнение условия.`)
 }

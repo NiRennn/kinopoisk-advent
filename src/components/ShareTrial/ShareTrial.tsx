@@ -1,28 +1,31 @@
 import { useState } from "react"
+import { useTelegramBackButton } from "../../utils/telegramBack"
 import { createPortal } from "react-dom"
 import "./ShareTrial.scss"
 import Button from "../Button/Button"
 import bolt from "../../assets/icons/bolt.svg"
 import copy from "../../assets/icons/copy.svg"
 import cross from "../../assets/icons/cross.svg"
+import { formatNbsp } from "../../utils/typography"
 
-const TRIAL_CODE = "SADGADHF67"
-const TRIAL_TEXT =
-  "Спасибо, что ты уже с нами! А этот триал — для кого-то из твоих близких, с кем будет классно смотреть спорт в новом году"
+const TRIAL_TEXT = formatNbsp(
+  "Спасибо, что ты уже с нами! А этот триал — для кого-то из твоих близких, с кем будет классно смотреть спорт в новом году",
+)
 
 type ShareTrialProps = {
+  code: string
   onClose: () => void
 }
 
-function shareTrial() {
-  const text = `Триал для близкого\n${TRIAL_TEXT}\n${TRIAL_CODE}`
+function shareTrial(code: string) {
+  const text = `Триал для близкого\n${TRIAL_TEXT}\n${code}`
   const link = `https://t.me/share/url?text=${encodeURIComponent(text)}`
   const tg = window.Telegram?.WebApp
   if (typeof tg?.openTelegramLink === "function") tg.openTelegramLink(link)
   else window.open(link, "_blank", "noopener")
 }
 
-function ShareTrial({ onClose }: ShareTrialProps) {
+function ShareTrial({ code, onClose }: ShareTrialProps) {
   const [closing, setClosing] = useState(false)
   const [copied, setCopied] = useState(false)
 
@@ -30,13 +33,14 @@ function ShareTrial({ onClose }: ShareTrialProps) {
     if (closing) return
     setClosing(true)
   }
+  useTelegramBackButton(close)
 
   const copyCode = async () => {
     try {
-      await navigator.clipboard.writeText(TRIAL_CODE)
+      await navigator.clipboard.writeText(code)
     } catch {
       const input = document.createElement("textarea")
-      input.value = TRIAL_CODE
+      input.value = code
       document.body.appendChild(input)
       input.select()
       document.execCommand("copy")
@@ -64,12 +68,12 @@ function ShareTrial({ onClose }: ShareTrialProps) {
           <p>{TRIAL_TEXT}</p>
         </div>
         <div className="share__code">
-          <span>{copied ? "Скопировано" : TRIAL_CODE}</span>
+          <span>{copied ? "Скопировано" : code}</span>
           <button type="button" aria-label="Скопировать код" onClick={copyCode}>
             <img src={copy} alt="" />
           </button>
         </div>
-        <Button onClick={shareTrial}>Поделиться триалом</Button>
+        <Button onClick={() => shareTrial(code)}>Поделиться триалом</Button>
       </div>
     </div>,
     document.body,

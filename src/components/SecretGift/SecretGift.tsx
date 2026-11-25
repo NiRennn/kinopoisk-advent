@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTelegramBackButton } from "../../utils/telegramBack";
 import { createPortal } from "react-dom";
 import "./SecretGift.scss";
 import Button from "../Button/Button";
@@ -7,6 +8,7 @@ import station from "../../assets/images/cells/ice-yandex1.png";
 import phone from "../../assets/images/cells/ice-iphone1.png";
 import hlop from "../../assets/icons/hlop.svg";
 import { alreadyCopy, joinedCopy } from "../../advent/format";
+import { formatNbsp } from "../../utils/typography";
 
 type SecretGiftProps = {
   joined: boolean;
@@ -26,6 +28,12 @@ function SecretGift({ joined, title, image, resultsLabel, resultsAt, onJoin, onC
   const [error, setError] = useState("");
   const returning = joined && !celebrating;
 
+  const close = () => {
+    if (closing || joining) return;
+    setClosing(true);
+  };
+  useTelegramBackButton(close);
+
   const handleAction = async () => {
     if (closing || joining) return;
     if (!joined && !celebrating) {
@@ -41,7 +49,7 @@ function SecretGift({ joined, title, image, resultsLabel, resultsAt, onJoin, onC
       }
       return;
     }
-    setClosing(true);
+    close();
   };
 
   return createPortal(
@@ -81,7 +89,7 @@ function SecretGift({ joined, title, image, resultsLabel, resultsAt, onJoin, onC
                 {title.split("\n").map((line, index) => (
                   <span key={`${line}-${index}`}>
                     {index > 0 && <br />}
-                    {line}
+                    {formatNbsp(line)}
                   </span>
                 ))}
               </>
@@ -92,12 +100,12 @@ function SecretGift({ joined, title, image, resultsLabel, resultsAt, onJoin, onC
               ? joinedCopy(title, resultsAt ?? null)
               : returning
                 ? alreadyCopy(resultsAt ?? null)
-                : <>Сегодня можно выиграть {title.split("\n").map((line, index) => (
+                : <>{formatNbsp("Сегодня можно выиграть")} {title.split("\n").map((line, index) => (
                   <span key={`${line}-${index}`}>
                     {index > 0 && <br />}
-                    {line}
+                    {formatNbsp(line)}
                   </span>
-                ))}. Итоги розыгрыша — завтра в 12:00 МСК. Для участия достаточно нажать кнопку ниже</>}
+                ))}. {formatNbsp("Итоги розыгрыша — завтра в 12:00 МСК. Для участия достаточно нажать кнопку ниже")}</>}
           </p>
         </div>
       </div>

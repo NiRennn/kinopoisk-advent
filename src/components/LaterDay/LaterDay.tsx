@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useTelegramBackButton } from "../../utils/telegramBack";
 import { createPortal } from "react-dom";
 import "./LaterDay.scss";
 import Button from "../Button/Button";
 import calendar from "../../assets/icons/calendar.svg";
 import cross from "../../assets/icons/cross.svg";
 import { formatDayMonth } from "../../advent/format";
+import { formatNbsp } from "../../utils/typography";
 
 type LaterDayProps = {
   date: string;
@@ -18,6 +20,7 @@ function LaterDay({ date, onClose }: LaterDayProps) {
     if (closing) return;
     setClosing(true);
   };
+  useTelegramBackButton(close);
 
   return createPortal(
     <div
@@ -46,7 +49,7 @@ function LaterDay({ date, onClose }: LaterDayProps) {
           <img className="later__icon" src={calendar} alt="" />
           <h2 className="later__title">Откроем {formatDayMonth(date)}</h2>
           <p className="later__text">
-            Этот кубик льда пока закрыт. Возвращайтесь {formatDayMonth(date)} за новым подарком.
+            {formatNbsp(`Этот кубик льда пока закрыт. Возвращайтесь ${formatDayMonth(date)} за новым подарком.`)}
           </p>
         </div>
         <Button onClick={close}>Подожду</Button>

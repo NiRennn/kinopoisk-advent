@@ -8,7 +8,13 @@ export type AdventSession = {
   phase: AdventPhase
   days: Day[]
   botUrl: string
+  trialCode: string | null
   user: AdventUser | null
+}
+
+export function presentCode(code: string | null | undefined) {
+  const value = code?.trim()
+  return value ? value : null
 }
 
 let session: AdventSession | null = null

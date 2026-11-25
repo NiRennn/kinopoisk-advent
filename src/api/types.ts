@@ -49,11 +49,17 @@ export type AdventUser = {
   photo: string | null
 }
 
+export type Trial = {
+  code: string | null
+  terms: string | null
+}
+
 export type OpenResponse = {
   user: AdventUser
   subscribed: boolean
   bot_url: string
   days: Day[]
+  trial?: Trial | null
 }
 
 export type CheckSubResponse = {
