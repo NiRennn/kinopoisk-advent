@@ -11,7 +11,7 @@ export function formatNbsp(text: string): string {
 
   // 2. Prepositions and conjunctions followed by a space. Newlines stay line breaks.
   const prepPattern = new RegExp(
-    `(^|[\\s(«"„—–-])(в|во|без|до|для|за|из|к|ко|на|над|о|об|обо|от|перед|при|про|с|со|у|под|по|через|и|а|но|да|не|ни|или)${gap}`,
+    `(^|[\\s(«"„—–-])(в|во|без|до|для|за|из|к|ко|на|над|о|об|обо|от|перед|при|про|с|со|у|под|по|через|и|а|но|да|не|ни|или|чтобы)${gap}`,
     "gi",
   );
 
