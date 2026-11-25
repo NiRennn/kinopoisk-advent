@@ -42,8 +42,8 @@ type PartnerGiftProps = {
 };
 
 function prizePicture(title: string, image: string | null | undefined, mark: PartnerKey | null) {
-  if (mark === "zenit") return iceZenit;
   if (image) return image;
+  if (mark === "zenit") return iceZenit;
   if (/станц/i.test(title)) return station;
   if (mark) return MARK[mark];
   return station;

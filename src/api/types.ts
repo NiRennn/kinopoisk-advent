@@ -37,6 +37,7 @@ export type Day = {
   result: DayResult | null
   results_at: string | null
   prize: Prize | null
+  logo?: string | null
   partner?: Partner | null
   fact?: Fact | null
   winner?: Winner | null

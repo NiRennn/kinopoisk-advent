@@ -289,6 +289,33 @@ function Game() {
 
   return (
     <div className="game" ref={gameRef}>
+      <svg className="game__filters" aria-hidden="true">
+        <filter id="cell-number-inset" x="-30%" y="-60%" width="160%" height="220%" colorInterpolationFilters="sRGB">
+          <feFlood floodColor="#FDFDFD" floodOpacity="0.74" result="flood3" />
+          <feComposite in="flood3" in2="SourceAlpha" operator="out" result="outside3" />
+          <feOffset in="outside3" dx="0" dy="-3" result="offset3" />
+          <feGaussianBlur in="offset3" stdDeviation="1" result="blur3" />
+          <feComposite in="blur3" in2="SourceAlpha" operator="in" result="inner3" />
+          <feBlend in="inner3" in2="SourceGraphic" mode="overlay" result="withHighlight" />
+
+          <feFlood floodColor="#DED9DD" floodOpacity="1" result="flood2" />
+          <feComposite in="flood2" in2="SourceAlpha" operator="out" result="outside2" />
+          <feGaussianBlur in="outside2" stdDeviation="1.1" result="blur2" />
+          <feComposite in="blur2" in2="SourceAlpha" operator="in" result="inner2" />
+
+          <feFlood floodColor="#000000" floodOpacity="0.52" result="flood1" />
+          <feComposite in="flood1" in2="SourceAlpha" operator="out" result="outside1" />
+          <feOffset in="outside1" dx="1" dy="0" result="offset1" />
+          <feGaussianBlur in="offset1" stdDeviation="0.35" result="blur1" />
+          <feComposite in="blur1" in2="SourceAlpha" operator="in" result="inner1" />
+
+          <feMerge>
+            <feMergeNode in="withHighlight" />
+            <feMergeNode in="inner2" />
+            <feMergeNode in="inner1" />
+          </feMerge>
+        </filter>
+      </svg>
       {phase === "ready" && (
         <div className="game__content">
           <img src={logo} alt="" className="game__content-logo" />

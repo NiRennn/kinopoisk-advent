@@ -159,38 +159,29 @@ body.is-mobile .game__content-logo,
   transform: none;
 }
 
+.game__filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
 .game__content-field-item-number {
   position: absolute;
   z-index: 1;
-  top: 16%;
-  left: 15%;
+  top: 12%;
+  left: 12%;
   color: #53372d;
   font-family: "kinopoisk-semibold";
   font-size: 20px;
-  font-weight: 600;
   line-height: 1;
-  text-shadow:
-    1px 0 0.7px rgba(0, 0, 0, 0.52),
-    0 0 2.2px #ded9dd;
-
-  &::after {
-    content: attr(data-n);
-    position: absolute;
-    inset: 0;
-    color: transparent;
-    text-shadow: 0 -3px 2px rgba(253, 253, 253, 0.74);
-    mix-blend-mode: overlay;
-    pointer-events: none;
-  }
+  filter: url("#cell-number-inset");
 }
 
 .game__content-field-item-number--open {
   color: #fff;
+  filter: none;
   text-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
-
-  &::after {
-    content: none;
-  }
 }
 
 .game__blur {

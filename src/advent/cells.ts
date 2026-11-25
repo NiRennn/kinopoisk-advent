@@ -73,6 +73,7 @@ export function cellView(day: Day, days: Day[]) {
     day.status === "future"
 
   if (day.status === "closed") {
+    if (day.prize?.image) return { src: day.prize.image, contain: true }
     if (key === "zenit") return { src: iceZenit, contain: true }
     return { src: iceYandex, contain: true }
   }
