@@ -26,13 +26,7 @@ function LaterDay({ date, onClose }: LaterDayProps) {
     <div
       className={`later${closing ? " later--closing" : ""}`}
       onAnimationEnd={(event) => {
-        if (
-          event.target === event.currentTarget &&
-          event.animationName === "overlay-out" &&
-          closing
-        ) {
-          onClose();
-        }
+        if (event.animationName === "sheet-out" && closing) onClose();
       }}
     >
       <button

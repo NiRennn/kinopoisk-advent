@@ -25,11 +25,9 @@
   align-items: flex-end;
   justify-content: center;
   padding: 0 16px calc(var(--tg-safe-area-inset-bottom, 0px) + 20px);
-  animation: overlay-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .final-sheet--closing {
-  animation: overlay-out 0.42s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   pointer-events: none;
 }
 

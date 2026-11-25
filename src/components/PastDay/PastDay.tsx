@@ -46,13 +46,7 @@ function PastDay({ image, text, onClose, onOpen }: PastDayProps) {
       ref={rootRef}
       className={`past${closing ? " past--closing" : ""}`}
       onAnimationEnd={(event) => {
-        if (
-          event.target === event.currentTarget &&
-          event.animationName === "overlay-out" &&
-          closing
-        ) {
-          onClose();
-        }
+        if (event.animationName === "sheet-out" && closing) onClose();
       }}
     >
       <button

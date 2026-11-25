@@ -71,13 +71,7 @@ function FinalGift({
       <div
         className={`final-sheet${closing ? " final-sheet--closing" : ""}`}
         onAnimationEnd={(event) => {
-          if (
-            event.target === event.currentTarget &&
-            event.animationName === "overlay-out" &&
-            closing
-          ) {
-            onClose()
-          }
+          if (event.animationName === "sheet-out" && closing) onClose()
         }}
       >
         <button type="button" className="final__veil" aria-label="Закрыть" onClick={close} />

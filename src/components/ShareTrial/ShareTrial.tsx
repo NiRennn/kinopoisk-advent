@@ -54,7 +54,7 @@ function ShareTrial({ code, onClose }: ShareTrialProps) {
     <div
       className={`share${closing ? " share--closing" : ""}`}
       onAnimationEnd={(event) => {
-        if (event.target === event.currentTarget && event.animationName === "overlay-out" && closing) onClose()
+        if (event.animationName === "sheet-out" && closing) onClose()
       }}
     >
       <button type="button" className="share__veil" aria-label="Закрыть" onClick={close} />
