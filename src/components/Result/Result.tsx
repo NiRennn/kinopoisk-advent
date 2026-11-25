@@ -233,7 +233,9 @@ function Result({
             />
             <p>
               Принимаю{" "}
-              <span>условия обработки персональных данных</span>
+              <a href="https://ya.ru/" target="_blank" rel="noopener noreferrer">
+                условия обработки персональных данных
+              </a>
             </p>
           </div>
 
