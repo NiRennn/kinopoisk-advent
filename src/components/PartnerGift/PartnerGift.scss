@@ -126,6 +126,19 @@
   transform: translate(-50%, 0);
 }
 
+@media (max-height: 780px) {
+  body.is-mobile .secret--joined .partner__hero,
+  [data-platform="mobile"] .secret--joined .partner__hero {
+    width: min(176px, 58%);
+  }
+
+  body.is-mobile .secret--joined .partner__hero .secret__prize,
+  [data-platform="mobile"] .secret--joined .partner__hero .secret__prize {
+    width: 100%;
+    height: 100%;
+  }
+}
+
 .partner .partner__status--in {
   max-height: 90px;
   margin-bottom: 12px;
