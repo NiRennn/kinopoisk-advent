@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { useTelegramBackButton } from "../../utils/telegramBack";
 import { createPortal } from "react-dom";
 import "./Result.scss";
@@ -10,6 +10,7 @@ import { ApiError } from "../../api/client";
 import type { Fact, Prize, WinnerForm } from "../../api/types";
 import { formatDayMonth } from "../../advent/format";
 import { formatNbsp } from "../../utils/typography";
+import { revealResult } from "../../utils/motion";
 
 export type ResultOutcome = "win" | "lose" | "missed";
 
@@ -61,7 +62,17 @@ function Result({
   const [address, setAddress] = useState("");
   const [consent, setConsent] = useState(false);
   const [copied, setCopied] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
   useTelegramBackButton(onClose);
+
+  useLayoutEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const timeline = revealResult(root);
+    return () => {
+      timeline.kill();
+    };
+  }, []);
 
   const ready =
     name.trim() !== "" &&
@@ -128,7 +139,10 @@ function Result({
   const fail = outcome === "lose" || outcome === "missed";
 
   return createPortal(
-    <div className={`result result--${outcome}${sent ? " result--sent" : ""}${digital ? " result--promo" : ""}`}>
+    <div
+      ref={rootRef}
+      className={`result result--${outcome}${sent ? " result--sent" : ""}${digital ? " result--promo" : ""}`}
+    >
       <div className="result__hero">
         {outcome === "win" && <img className="result__logo" src={logo} alt="Кинопоиск" />}
         {outcome === "win" && !digital && prizeImage && <img className="result__prize" src={prizeImage} alt="" />}

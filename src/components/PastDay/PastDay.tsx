@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTelegramBackButton } from "../../utils/telegramBack";
+import { sheetOut } from "../../utils/motion";
 import { createPortal } from "react-dom";
 import "./PastDay.scss";
 import Button from "../Button/Button";
@@ -16,15 +17,33 @@ type PastDayProps = {
 
 function PastDay({ image, text, onClose, onOpen }: PastDayProps) {
   const [closing, setClosing] = useState(false);
+  const opening = useRef(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const close = () => {
-    if (closing) return;
+    if (closing || opening.current) return;
     setClosing(true);
   };
   useTelegramBackButton(close);
 
+  const open = () => {
+    if (closing || opening.current) return;
+    opening.current = true;
+    const root = rootRef.current;
+    const card = cardRef.current;
+    if (!root || !card) {
+      onOpen();
+      return;
+    }
+    root.style.animation = "none";
+    card.style.animation = "none";
+    sheetOut(root, card, onOpen);
+  };
+
   return createPortal(
     <div
+      ref={rootRef}
       className={`past${closing ? " past--closing" : ""}`}
       onAnimationEnd={(event) => {
         if (
@@ -42,7 +61,7 @@ function PastDay({ image, text, onClose, onOpen }: PastDayProps) {
         aria-label="Закрыть"
         onClick={close}
       />
-      <div className="past__card">
+      <div ref={cardRef} className="past__card">
         <button type="button" className="past__close" aria-label="Закрыть" onClick={close}>
           <img src={cross} alt="" />
         </button>
@@ -57,7 +76,7 @@ function PastDay({ image, text, onClose, onOpen }: PastDayProps) {
             {formatNbsp(text || "Итоги уже известны. Откройте их, чтобы узнать, повезло ли вам.")}
           </p>
         </div>
-        <Button onClick={onOpen}>Открыть итоги</Button>
+        <Button onClick={open}>Открыть итоги</Button>
       </div>
     </div>,
     document.body,

@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, type MouseEvent } from "react"
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from "react"
+import gsap from "gsap"
 import { useNavigate } from "react-router-dom"
 import "./Game.scss"
 import appRoutes from "../../routes/routes"
@@ -17,6 +18,7 @@ import { getAdventSession, prepareDay, presentCode, type AdventPhase } from "../
 import { cellView, partnerKey, partnerLabel } from "../../advent/cells"
 import { dayOf, resultsLabel } from "../../advent/format"
 import { formatNbsp } from "../../utils/typography"
+import { revealCalendar } from "../../utils/motion"
 import { joinMockDay } from "../../advent/mock"
 import logo from "../../assets/icons/kinopoisk.svg"
 import info from "../../assets/icons/info-gray.svg"
@@ -108,6 +110,7 @@ function Game() {
   const [botUrl, setBotUrl] = useState(initial?.botUrl ?? "")
   const [trialCode, setTrialCode] = useState<string | null>(initial?.trialCode ?? null)
   const [showOnboarding, setShowOnboarding] = useState(false)
+  const [revealGrid, setRevealGrid] = useState(false)
   const [showHint, setShowHint] = useState(false)
   const [showShare, setShowShare] = useState(false)
   const openedToday = useRef(false)
@@ -116,6 +119,11 @@ function Game() {
   const mockSub = useRef(false)
   const pendingRef = useRef<{ day: Day; mode: "cell" | "result" } | null>(null)
   const gameRef = useRef<HTMLDivElement>(null)
+  const fieldRef = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLSpanElement>(null)
+  const logoRef = useRef<HTMLImageElement>(null)
+  const barRef = useRef<HTMLDivElement>(null)
+  const revealed = useRef(false)
 
   const mergeDay = (day: Day) => {
     const next = prepareDay(day)
@@ -138,7 +146,10 @@ function Game() {
   useEffect(() => {
     if (phase !== "ready" || introduced.current) return
     introduced.current = true
-    if (onboardingSeen()) return
+    if (onboardingSeen()) {
+      setRevealGrid(true)
+      return
+    }
     pendingRef.current = pendingAction(days)
     setShowOnboarding(true)
   }, [phase])
@@ -261,6 +272,7 @@ function Game() {
   const finishOnboarding = () => {
     markOnboardingSeen()
     setShowOnboarding(false)
+    setRevealGrid(true)
     const action = pendingRef.current
     pendingRef.current = null
     if (!action) return
@@ -280,6 +292,27 @@ function Game() {
     if (modal?.type === "result") markSeen(modal.day.date)
     setModal(null)
   }
+
+  useLayoutEffect(() => {
+    if (revealed.current) return
+    if (phase !== "ready" || !revealGrid || showOnboarding || modal) return
+    const field = fieldRef.current
+    if (!field) return
+    const cells = Array.from(field.querySelectorAll<HTMLElement>(".game__content-field-item"))
+    if (!cells.length) return
+    const timeline = revealCalendar(cells, headerRef.current, logoRef.current, barRef.current)
+    if (timeline.duration() === 0) {
+      revealed.current = true
+      return
+    }
+    timeline.eventCallback("onComplete", () => {
+      revealed.current = true
+    })
+    return () => {
+      timeline.kill()
+      if (!revealed.current) gsap.set(cells, { autoAlpha: 0, y: 16, scale: 0.94 })
+    }
+  }, [phase, revealGrid, showOnboarding, modal, days.length])
 
   const day = modal?.day
   const outcome = day ? outcomeOf(day.result) : null
@@ -318,9 +351,9 @@ function Game() {
       </svg>
       {phase === "ready" && (
         <div className="game__content">
-          <img src={logo} alt="" className="game__content-logo" />
-          <span className="game__content-header">Месяц подарков</span>
-          <div className="game__content-field" onClick={openCell}>
+          <img ref={logoRef} src={logo} alt="" className="game__content-logo" />
+          <span ref={headerRef} className="game__content-header">Месяц подарков</span>
+          <div ref={fieldRef} className="game__content-field" onClick={openCell}>
             {days.map((item, index) => {
               const today = item.status === "today"
               const view = cellView(item, days)
@@ -359,7 +392,7 @@ function Game() {
       )}
 
       {phase === "ready" && (
-        <div className="game__blur">
+        <div ref={barRef} className="game__blur">
           <div className="game__blur-wrapper">
           <div className="game__blur-tip">
             <img src={info} alt="" className="game__blur-tip-img" />
