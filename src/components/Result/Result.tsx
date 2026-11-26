@@ -25,6 +25,7 @@ type ResultProps = {
   formRequired?: boolean;
   formFilled?: boolean;
   promoCode?: string | null;
+  promoTerms?: string | null;
   resultsAt?: string | null;
   resultsPublished?: boolean;
   onSubmit?: (form: WinnerForm) => Promise<void>;
@@ -46,12 +47,13 @@ function Result({
   outcome,
   fact,
   prizeTitle,
-  prizeText,
+  // prizeText,
   prizeImage,
   prizeType,
   formRequired = true,
   formFilled = false,
   promoCode,
+  promoTerms,
   resultsAt,
   resultsPublished = false,
   onSubmit,
@@ -122,7 +124,7 @@ function Result({
 
   const digital = prizeType === "digital" || (Boolean(promoCode) && !formRequired);
   const title = prizeTitle?.trim() || "";
-  const conditions = prizeText?.trim() || "";
+  const conditions = promoTerms?.trim() || "";
 
   const copyCode = async () => {
     if (!promoCode) return;
@@ -140,13 +142,13 @@ function Result({
     window.setTimeout(() => setCopied(false), 1600);
   };
 
-const fail = outcome === "lose" || outcome === "missed";
+  const fail = outcome === "lose" || outcome === "missed";
 
-const factUrl = fact?.product_url?.trim() || fact?.url?.trim();
+  const factUrl = fact?.product_url?.trim() || fact?.url?.trim();
 
-const hasFact = Boolean(
-  fact?.title || fact?.text || fact?.image || factUrl
-);
+  const hasFact = Boolean(
+    fact?.title || fact?.text || fact?.image || factUrl
+  );
   const showDate = outcome !== "missed" || resultsPublished;
 
   return createPortal(
@@ -162,11 +164,11 @@ const hasFact = Boolean(
           digital ? (
             <>
               {/* <h1 className="result__headline">{formatNbsp(title || "Вы выиграли!")}</h1> */}
-<h1 className="result__headline">
-  Подписка
-  <br />
-  {formatNbsp("«Матч Максимум» — ваша!")}
-</h1>              <p className="result__lead">
+              <h1 className="result__headline">
+                Подписка
+                <br />
+                {formatNbsp("«Матч Максимум» — ваша!")}
+              </h1>              <p className="result__lead">
                 {formatNbsp(
                   title
                     ? `Поздравляем! Промокод на подписку «Матч Максимум» уже доступен. Скопируйте код и активируйте подписку по инструкции`
@@ -225,7 +227,7 @@ const hasFact = Boolean(
             <span>
               Город получения <i>*</i>
             </span>
-            <input 
+            <input
               value={city}
               placeholder="Москва"
               onChange={(event) => setCity(event.target.value)}
@@ -270,19 +272,31 @@ const hasFact = Boolean(
         <div className="result__sheet result__sheet--promo">
           <div className="result__promo">
             <h2>Ваш промокод</h2>
-            {conditions && <p>{formatNbsp(`Срок действия и условия активации: ${conditions}`)}</p>}
-{promoCode && (
-  <button
-    type="button"
-    className="result__codebox"
-    onClick={copyCode}
-  >
-    {copied ? "Скопировано" : promoCode}
-  </button>
-)}          </div>
+
+            {conditions && (
+              <p>
+                {formatNbsp(`Срок действия и условия активации: ${conditions}`)}
+              </p>
+            )}
+
+            {promoCode && (
+              <button
+                type="button"
+                className="result__codebox"
+                onClick={copyCode}
+              >
+                {copied ? "Скопировано" : promoCode}
+              </button>
+            )}
+          </div>
+
           <div className="result__promo-actions">
-            {promoCode && <Button onClick={copyCode}>Скопировать код</Button>}
-            <Button variant="secondary" onClick={onClose}>Закрыть</Button>
+            {promoCode && (
+              <Button onClick={copyCode}>Скопировать код</Button>
+            )}
+            <Button variant="secondary" onClick={onClose}>
+              Закрыть
+            </Button>
           </div>
         </div>
       )}
@@ -304,7 +318,7 @@ const hasFact = Boolean(
           <img className="result__cubes" src={fact?.image || cubes} alt="" />
           {fact?.title && (
             <h2 className="result__fact-title">
-              {fact.title.split("\n").map((line, index) => ( 
+              {fact.title.split("\n").map((line, index) => (
                 <span key={index}>
                   {index > 0 && <br />}
                   {formatNbsp(line)}
@@ -314,23 +328,23 @@ const hasFact = Boolean(
           )}
           {fact?.text && <p className="result__fact-text">{formatNbsp(fact.text)}</p>}
           {factUrl && (
-  <a
-    className="result__fact-link"
-    href={factUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    onClick={(event) => {
-      const tg = window.Telegram?.WebApp;
+            <a
+              className="result__fact-link"
+              href={factUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(event) => {
+                const tg = window.Telegram?.WebApp;
 
-      if (typeof tg?.openLink === "function") {
-        event.preventDefault();
-        tg.openLink(factUrl);
-      }
-    }}
-  >
-    {factUrl}
-  </a>
-)}
+                if (typeof tg?.openLink === "function") {
+                  event.preventDefault();
+                  tg.openLink(factUrl);
+                }
+              }}
+            >
+              {factUrl}
+            </a>
+          )}
           <Button onClick={onClose}>{outcome === "missed" ? "К календарю" : "К Адвенту"}</Button>
         </div>
       )}

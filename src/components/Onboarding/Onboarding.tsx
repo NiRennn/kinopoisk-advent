@@ -33,7 +33,7 @@ function Onboarding({ onClose }: OnboardingProps) {
         }
       }}
     >
-      <div className="onboarding__veil" /> 
+      <div className="onboarding__veil" />
       <div className="onboarding__mask" />
 
       <img className="onboarding__logo" src={logo} alt="Кинопоиск" />

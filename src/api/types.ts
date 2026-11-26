@@ -28,6 +28,7 @@ export type Winner = {
   form_filled: boolean
   form_deadline: string
   promo_code: string | null
+  promo_terms?: string | null;
 }
 
 export type Day = {

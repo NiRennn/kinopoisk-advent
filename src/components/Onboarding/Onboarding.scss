@@ -81,6 +81,17 @@ body.is-mobile .onboarding__logo,
   width: min(240px, 62%);
   height: auto;
   display: block;
+  animation: cubes-float 3.5s ease-in-out infinite;
+}
+
+@keyframes cubes-float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .onboarding__copy {

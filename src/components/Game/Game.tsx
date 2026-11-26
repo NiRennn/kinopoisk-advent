@@ -402,15 +402,15 @@ function Game() {
       {phase === "ready" && (
         <div ref={barRef} className="game__blur">
           <div className="game__blur-wrapper">
-          <div className="game__blur-tip">
-            <img src={info} alt="" className="game__blur-tip-img" />
-            <span className="game__blur-tip-text">{formatNbsp("Нажимайте на кубики льда каждый день, чтобы увидеть приз, который будет разыгрываться сегодня")}</span>
-          </div>
-          {trialCode && (
-            <button type="button" className="game__blur-share-btn" aria-label="Поделиться" onClick={() => setShowShare(true)}>
-              <img src={share} alt="" className="game__blur-share-btn-img"/>
-            </button>
-          )}
+            <div className="game__blur-tip">
+              <img src={info} alt="" className="game__blur-tip-img" />
+              <span className="game__blur-tip-text">{formatNbsp("Нажимайте на кубики льда каждый день, чтобы увидеть приз, который будет разыгрываться сегодня")}</span>
+            </div>
+            {trialCode && (
+              <button type="button" className="game__blur-share-btn" aria-label="Поделиться" onClick={() => setShowShare(true)}>
+                <img src={share} alt="" className="game__blur-share-btn-img" />
+              </button>
+            )}
           </div>
 
         </div>
@@ -479,7 +479,7 @@ function Game() {
           joined={day.status === "joined" || day.participated}
           // title={day.prize?.title || "Клубный мерч!"}
           requiresSubscription={day.partner != null}
-title={day.prize?.title || "Клубный мерч!"}          partnerName={partnerLabel(day)}
+          title={day.prize?.title || "Клубный мерч!"} partnerName={partnerLabel(day)}
           mark={partnerKey(day)}
           image={day.prize?.image}
           resultsLabel={label}
@@ -528,6 +528,7 @@ title={day.prize?.title || "Клубный мерч!"}          partnerName={par
           formRequired={day.winner?.form_required ?? false}
           formFilled={day.winner?.form_filled ?? false}
           promoCode={day.winner?.promo_code}
+          promoTerms={day.winner?.promo_terms}
           onSubmit={liveRef.current && day.winner ? (form) => sendForm(day, form) : undefined}
           onClose={closeResult}
         />
