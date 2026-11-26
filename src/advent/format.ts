@@ -73,6 +73,18 @@ export function resultsLabel(iso: string | null, result: string | null) {
   return formatNbsp(`Итоги ${when.d} ${MONTHS[when.m - 1]} в ${when.hm} МСК`)
 }
 
+export function resultsWhen(iso: string | null) {
+  if (!iso) return ""
+  const when = new Date(iso).toLocaleString("ru", {
+    timeZone: "Europe/Moscow",
+    day: "numeric",
+    month: "long",
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+  return formatNbsp(when)
+}
+
 export function finalWhen(iso: string | null) {
   if (!iso) return formatNbsp("скоро")
   const when = moscowDate(iso)

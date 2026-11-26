@@ -72,14 +72,14 @@ function outcomeOf(result: Day["result"]): ResultOutcome | null {
 }
 
 function screenFor(day: Day, mode: "cell" | "result"): Modal {
-  if (day.kind === "final" && day.status !== "future") {
-    if (day.result === "missed") return mode === "result" ? { type: "result", day } : { type: "past", day }
-    return { type: "final", day }
-  }
-  if (mode === "result" && day.result && day.result !== "pending") return { type: "result", day }
   if (day.status === "future") return { type: "later", day }
-  if (day.status === "closed" && day.result && day.result !== "pending") return { type: "past", day }
+  if (day.result === "missed") return { type: "result", day }
+  if (day.result === "won" || day.result === "lost") {
+    if (mode === "result") return day.kind === "final" ? { type: "final", day } : { type: "result", day }
+    return { type: "past", day }
+  }
   if (day.kind === "partner") return { type: "partner", day }
+  if (day.kind === "final") return { type: "final", day }
   return { type: "gift", day }
 }
 
@@ -90,7 +90,7 @@ function pendingAction(days: Day[]): { day: Day; mode: "cell" | "result" } | nul
     return day ? { day, mode: "cell" } : null
   }
   const seen = readSeen()
-  const day = [...days].reverse().find((item) => (item.result === "won" || item.result === "lost") && !seen.has(item.date))
+  const day = [...days].reverse().find((item) => item.results_published && (item.result === "won" || item.result === "lost") && !seen.has(item.date))
   return day ? { day, mode: "result" } : null
 }
 
@@ -176,10 +176,7 @@ function Game() {
           const fresh = list.find((item) => item.date === current.day.date)
           if (!fresh) return current
           const merged = { ...current.day, ...fresh, fact: fresh.fact ?? current.day.fact, winner: fresh.winner ?? current.day.winner }
-          if ((current.type === "gift" || current.type === "partner") && merged.status === "closed" && merged.result && merged.result !== "pending") {
-            return { type: "past", day: merged }
-          }
-          return { ...current, day: merged }
+          return screenFor(merged, current.type === "result" ? "result" : "cell")
         })
       } catch {
         // Keep the calendar that is already on screen.
@@ -465,7 +462,11 @@ function Game() {
           image={modal.day.prize?.image}
           resultsLabel={label}
           resultsAt={modal.day.results_at}
-          outcome={modal.day.result === "won" || modal.day.result === "lost" ? modal.day.result : null}
+          outcome={
+            modal.day.results_published && (modal.day.result === "won" || modal.day.result === "lost")
+              ? modal.day.result
+              : null
+          }
           onJoin={() => participate(modal.day)}
           onRules={() => openTelegram(botUrl)}
           onClaim={() => openTelegram(botUrl)}
@@ -508,7 +509,7 @@ function Game() {
           image={modal.day.prize?.image}
           text={modal.day.prize?.text}
           onClose={() => setModal(null)}
-          onOpen={() => setModal({ type: "result", day: modal.day })}
+          onOpen={() => setModal(screenFor(modal.day, "result"))}
         />
       )}
 
@@ -517,6 +518,8 @@ function Game() {
           date={day.date}
           outcome={outcome}
           fact={day.fact}
+          resultsAt={day.results_at}
+          resultsPublished={day.results_published === true}
           prizeTitle={day.prize?.title}
           prizeText={day.prize?.text}
           prizeImage={day.prize?.image}

@@ -360,6 +360,11 @@ body.is-mobile .result--win .result__logo,
   justify-content: flex-end;
   overflow: hidden;
 
+  .result__actions {
+    width: min(calc(100% - 30px), 470px);
+    margin: 28px auto calc(var(--tg-safe-area-inset-bottom, 0px) + 16px);
+  }
+
   .result__hero {
     width: min(100%, 500px);
     flex-shrink: 0;
@@ -469,6 +474,20 @@ body.is-mobile .result--win .result__logo,
 .result--missed {
   justify-content: flex-end;
   overflow: hidden;
+
+  .result__when {
+    margin: 16px 0 0;
+    max-width: 341px;
+    font-family: "kinopoisk-regular", sans-serif;
+    font-size: 14px;
+    line-height: 1.15;
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  .result__actions {
+    width: min(calc(100% - 30px), 470px);
+    margin: 28px auto calc(var(--tg-safe-area-inset-bottom, 0px) + 16px);
+  }
 
   .result__hero {
     width: min(100%, 500px);

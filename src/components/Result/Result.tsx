@@ -8,7 +8,7 @@ import check from "../../assets/icons/check.svg";
 import cubes from "../../assets/images/cells/cubes-123.png";
 import { ApiError } from "../../api/client";
 import type { Fact, Prize, WinnerForm } from "../../api/types";
-import { formatDayMonth } from "../../advent/format";
+import { formatDayMonth, resultsWhen } from "../../advent/format";
 import { formatNbsp } from "../../utils/typography";
 import { revealResult } from "../../utils/motion";
 
@@ -25,6 +25,8 @@ type ResultProps = {
   formRequired?: boolean;
   formFilled?: boolean;
   promoCode?: string | null;
+  resultsAt?: string | null;
+  resultsPublished?: boolean;
   onSubmit?: (form: WinnerForm) => Promise<void>;
   onClose: () => void;
 };
@@ -50,6 +52,8 @@ function Result({
   formRequired = true,
   formFilled = false,
   promoCode,
+  resultsAt,
+  resultsPublished = false,
   onSubmit,
   onClose,
 }: ResultProps) {
@@ -137,6 +141,8 @@ function Result({
   };
 
   const fail = outcome === "lose" || outcome === "missed";
+  const hasFact = Boolean(fact?.title || fact?.text || fact?.image);
+  const showDate = outcome !== "missed" || resultsPublished;
 
   return createPortal(
     <div
@@ -146,7 +152,7 @@ function Result({
       <div className="result__hero">
         {outcome === "win" && <img className="result__logo" src={logo} alt="Кинопоиск" />}
         {outcome === "win" && !digital && prizeImage && <img className="result__prize" src={prizeImage} alt="" />}
-        {outcome !== "missed" && <p className="result__date">{formatNbsp(`Итоги розыгрыша от ${formatDayMonth(date)}`)}</p>}
+        {showDate && <p className="result__date">{formatNbsp(`Итоги розыгрыша от ${formatDayMonth(date)}`)}</p>}
         {outcome === "win" ? (
           digital ? (
             <>
@@ -170,6 +176,11 @@ function Result({
               {FAIL_TITLES[outcome][1]}
             </h1>
             <p className="result__lead">{FAIL_LEAD[outcome]}</p>
+            {outcome === "missed" && !resultsPublished && (
+              <p className="result__when">
+                {formatNbsp(`Итоги розыгрыша — ${resultsWhen(resultsAt ?? null) || "скоро"}`)}
+              </p>
+            )}
           </>
         )}
       </div>
@@ -271,25 +282,27 @@ function Result({
         </div>
       )}
 
-      {fail && (
+      {fail && hasFact && (
         <div className="result__card">
-          {(fact?.title || fact?.text || fact?.image) && (
-            <>
-              <div className="result__chip">Интересный факт</div>
-              <img className="result__cubes" src={fact?.image || cubes} alt="" />
-              {fact.title && (
-                <h2 className="result__fact-title">
-                  {fact.title.split("\n").map((line, index) => (
-                    <span key={index}>
-                      {index > 0 && <br />}
-                      {formatNbsp(line)}
-                    </span>
-                  ))}
-                </h2>
-              )}
-              {fact.text && <p className="result__fact-text">{formatNbsp(fact.text)}</p>}
-            </>
+          <div className="result__chip">Интересный факт</div>
+          <img className="result__cubes" src={fact?.image || cubes} alt="" />
+          {fact?.title && (
+            <h2 className="result__fact-title">
+              {fact.title.split("\n").map((line, index) => (
+                <span key={index}>
+                  {index > 0 && <br />}
+                  {formatNbsp(line)}
+                </span>
+              ))}
+            </h2>
           )}
+          {fact?.text && <p className="result__fact-text">{formatNbsp(fact.text)}</p>}
+          <Button onClick={onClose}>{outcome === "missed" ? "К календарю" : "К Адвенту"}</Button>
+        </div>
+      )}
+
+      {fail && !hasFact && (
+        <div className="result__actions">
           <Button onClick={onClose}>{outcome === "missed" ? "К календарю" : "К Адвенту"}</Button>
         </div>
       )}

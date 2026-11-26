@@ -47,6 +47,7 @@ export function buildMockDays(): Day[] {
       participated: status === "closed" && result !== "missed",
       result,
       results_at: status === "future" ? null : `${dateOf(Math.min(day + 1, 31))}T15:00:00+00:00`,
+      results_published: status === "closed",
       prize: {
         title: sponsor?.prize ?? (kind === "final" ? "iPhone Duo" : "Шанс на розыгрыш\nЯндекс Станция 3"),
         text: LOREM,
