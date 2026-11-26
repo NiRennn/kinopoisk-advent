@@ -140,8 +140,13 @@ function Result({
     window.setTimeout(() => setCopied(false), 1600);
   };
 
-  const fail = outcome === "lose" || outcome === "missed";
-  const hasFact = Boolean(fact?.title || fact?.text || fact?.image);
+const fail = outcome === "lose" || outcome === "missed";
+
+const factUrl = fact?.product_url?.trim() || fact?.url?.trim();
+
+const hasFact = Boolean(
+  fact?.title || fact?.text || fact?.image || factUrl
+);
   const showDate = outcome !== "missed" || resultsPublished;
 
   return createPortal(
@@ -216,7 +221,7 @@ function Result({
             <span>
               Город получения <i>*</i>
             </span>
-            <input
+            <input 
               value={city}
               placeholder="Москва"
               onChange={(event) => setCity(event.target.value)}
@@ -297,6 +302,24 @@ function Result({
             </h2>
           )}
           {fact?.text && <p className="result__fact-text">{formatNbsp(fact.text)}</p>}
+          {factUrl && (
+  <a
+    className="result__fact-link"
+    href={factUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    onClick={(event) => {
+      const tg = window.Telegram?.WebApp;
+
+      if (typeof tg?.openLink === "function") {
+        event.preventDefault();
+        tg.openLink(factUrl);
+      }
+    }}
+  >
+    {factUrl}
+  </a>
+)}
           <Button onClick={onClose}>{outcome === "missed" ? "К календарю" : "К Адвенту"}</Button>
         </div>
       )}

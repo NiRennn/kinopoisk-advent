@@ -27,7 +27,7 @@ import share from '../../assets/icons/share.svg'
 import ShareTrial from "../ShareTrial/ShareTrial"
 
 const SEEN_KEY = "kp-advent-seen-results"
-const ONBOARDING_KEY = "kp-advent-onboarding"
+// const ONBOARDING_KEY = "kp-advent-onboarding"
 
 type Modal =
   | { type: "gift" | "partner" | "final" | "later" | "past" | "result"; day: Day }
@@ -42,21 +42,21 @@ function readSeen() {
   }
 }
 
-function onboardingSeen() {
-  try {
-    return localStorage.getItem(ONBOARDING_KEY) === "1"
-  } catch {
-    return false
-  }
-}
+// function onboardingSeen() {
+//   try {
+//     return localStorage.getItem(ONBOARDING_KEY) === "1"
+//   } catch {
+//     return false
+//   }
+// }
 
-function markOnboardingSeen() {
-  try {
-    localStorage.setItem(ONBOARDING_KEY, "1")
-  } catch {
-    // Storage can be unavailable in private mode.
-  }
-}
+// function markOnboardingSeen() {
+//   try {
+//     localStorage.setItem(ONBOARDING_KEY, "1")
+//   } catch {
+//     // Storage can be unavailable in private mode.
+//   }
+// }
 
 function markSeen(date: string) {
   const seen = readSeen()
@@ -147,10 +147,10 @@ function Game() {
   useEffect(() => {
     if (phase !== "ready" || introduced.current) return
     introduced.current = true
-    if (onboardingSeen()) {
-      setRevealGrid(true)
-      return
-    }
+    // if (onboardingSeen()) {
+    //   setRevealGrid(true)
+    //   return
+    // }
     pendingRef.current = pendingAction(days)
     setShowOnboarding(true)
   }, [phase])
@@ -269,7 +269,7 @@ function Game() {
   }
 
   const finishOnboarding = () => {
-    markOnboardingSeen()
+    // markOnboardingSeen()
     setShowOnboarding(false)
     setRevealGrid(true)
     const action = pendingRef.current

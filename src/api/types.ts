@@ -17,7 +17,8 @@ export type Partner = {
 export type Fact = {
   title: string
   text: string
-  url: string | null
+product_url?: string | null;
+url?: string | null;
   image: string | null
 }
 

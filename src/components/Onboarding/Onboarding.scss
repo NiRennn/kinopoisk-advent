@@ -27,7 +27,7 @@
 .onboarding__veil {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.67);
   -webkit-backdrop-filter: blur(14.8px);
   backdrop-filter: blur(14.8px);
 
@@ -104,11 +104,11 @@ body.is-mobile .onboarding__logo,
 .onboarding__text {
   margin: 0;
   font-family: "kinopoisk-regular", sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
-  line-height: 1.1;
+  line-height: 1.14;
   color: #000;
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 .onboarding__btn {
