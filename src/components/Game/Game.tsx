@@ -469,7 +469,12 @@ function Game() {
           }
           onJoin={() => participate(modal.day)}
           onRules={() => openTelegram(botUrl)}
-          onClaim={() => openTelegram(botUrl)}
+          onClaim={() => {
+            setModal({
+              type: "result",
+              day: modal.day,
+            });
+          }}
           onClose={() => setModal(null)}
         />
       )}

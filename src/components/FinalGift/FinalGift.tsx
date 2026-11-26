@@ -31,7 +31,7 @@ function FinalGift({
   resultsLabel,
   resultsAt,
   outcome,
-  onJoin, 
+  onJoin,
   onRules,
   onClaim,
   onClose,
