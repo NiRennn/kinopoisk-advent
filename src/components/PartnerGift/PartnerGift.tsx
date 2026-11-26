@@ -16,8 +16,8 @@ import info from "../../assets/icons/info-orange.svg";
 import refresh from "../../assets/icons/sub-check.svg";
 import { ApiError } from "../../api/client";
 import type { PartnerKey } from "../../advent/cells";
-import { alreadyCopy, partnerOfferCopy, partnerSubscribeCopy } from "../../advent/format";
-import { formatNbsp } from "../../utils/typography";
+import { alreadyCopy, partnerSubscribeCopy } from "../../advent/format";import { formatNbsp } from "../../utils/typography";
+import secretBox from '../../assets/images/cells/ice-prize1.png'
 
 type PartnerStep = "subscribe" | "checking" | "failed" | "gift";
 
@@ -29,6 +29,7 @@ const MARK: Record<Exclude<PartnerKey, "zenit">, string> = {
 
 type PartnerGiftProps = {
   joined: boolean;
+  requiresSubscription: boolean;
   title: string;
   partnerName?: string | null;
   mark?: PartnerKey | null;
@@ -46,11 +47,12 @@ function prizePicture(title: string, image: string | null | undefined, mark: Par
   if (mark === "zenit") return iceZenit;
   if (/станц/i.test(title)) return station;
   if (mark) return MARK[mark];
-  return station;
+  return station; 
 }
 
 function PartnerGift({
   joined,
+  requiresSubscription,
   title,
   partnerName,
   mark = null,
@@ -62,12 +64,16 @@ function PartnerGift({
   onJoin,
   onClose,
 }: PartnerGiftProps) {
-  const [step, setStep] = useState<PartnerStep>(joined ? "gift" : "subscribe");
+  // const [step, setStep] = useState<PartnerStep>(joined ? "gift" : "subscribe");
+const [step, setStep] = useState<PartnerStep>(
+   joined || !requiresSubscription ? "gift" : "subscribe",
+  );
   const [closing, setClosing] = useState(false);
   const [joining, setJoining] = useState(false);
   const [celebrating, setCelebrating] = useState(false);
   const [error, setError] = useState("");
   const confirmed = joined || celebrating;
+  const showSecretPrize = !confirmed;
   const from = partnerName ? `Подарок от ${partnerName}` : "Подарок от партнера";
 
   const close = () => {
@@ -96,7 +102,12 @@ function PartnerGift({
       await onJoin();
       setCelebrating(true);
     } catch (reason) {
-      if (reason instanceof ApiError && reason.code === "not_subscribed_partner") {
+      // if (reason instanceof ApiError && reason.code === "not_subscribed_partner") {
+            if (
+       requiresSubscription &&
+        reason instanceof ApiError &&
+        reason.code === "not_subscribed_partner"
+      ) {
         setStep("failed");
       } else {
         setError("Не получилось принять участие");
@@ -106,7 +117,8 @@ function PartnerGift({
     }
   };
 
-  const gift = step === "gift";
+  // const gift = step === "gift";
+  const gift = !requiresSubscription || confirmed || step === "gift";
   const markPhoto = mark && mark !== "zenit" ? MARK[mark] : null;
 
   return createPortal(
@@ -126,7 +138,7 @@ function PartnerGift({
       <div className="secret__texture" />
       <img className="secret__logo" src={logo} alt="Кинопоиск" />
 
-      {step === "failed" && (
+      {!gift && step === "failed" && (
         <div className="partner__alert">
           <img src={info} alt="" />
           <p>
@@ -146,7 +158,7 @@ function PartnerGift({
         </div>
       )}
 
-      {step === "checking" ? (
+      {!gift && step === "checking" ? (
         <div className="partner__check">
           <img src={refresh} alt="" />
           <h1>Проверяем подписку...</h1>
@@ -154,21 +166,27 @@ function PartnerGift({
       ) : gift ? (
         <div className="secret__body">
           <div className="partner__hero">
-            <img className="secret__prize" src={prizePicture(title, image, mark)} alt="" />
-            {mark && (
+<img
+  className="secret__prize"
+  src={showSecretPrize ? secretBox : prizePicture(title, image, mark)}
+  alt=""
+/>            {mark && (
               <div
                 className={`partner__badge${markPhoto ? " partner__badge--photo" : ""}`}
                 style={markPhoto ? { backgroundImage: `url("${markPhoto}")` } : undefined}
               />
             )}
           </div>
-          <div className="secret__copy">
-            <p className="partner__from">{formatNbsp(from)}</p>
-            <h1 className="secret__title">{formatNbsp(title)}</h1>
-            <p className="secret__text">
-              {confirmed ? alreadyCopy(resultsAt ?? null) : partnerOfferCopy(title, resultsAt ?? null)}
-            </p>
-          </div>
+<div className="secret__copy">
+  <p className="partner__from">{formatNbsp(from)}</p>
+<h1 className="secret__title">
+  {showSecretPrize ? "Секретный приз" : formatNbsp(title)}
+</h1>  <p className="secret__text">
+  {confirmed
+    ? alreadyCopy(resultsAt ?? null)
+    : formatNbsp(`Для участия нажмите кнопку ниже. ${resultsLabel}`)}
+</p>
+</div>
         </div>
       ) : (
         <div className="secret__body">
@@ -184,8 +202,9 @@ function PartnerGift({
               <br />
               клуба-партнера
             </h1>
-            <p className="secret__text">{partnerSubscribeCopy(title, partnerName ?? null)}</p>
-          </div>
+<p className="secret__text">
+  {partnerSubscribeCopy(partnerName ?? null)}
+</p>          </div>
         </div>
       )}
 

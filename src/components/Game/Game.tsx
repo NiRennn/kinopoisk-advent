@@ -477,8 +477,9 @@ function Game() {
       {phase === "ready" && modal?.type === "partner" && day && (
         <PartnerGift
           joined={day.status === "joined" || day.participated}
-          title={day.prize?.title || "Клубный мерч!"}
-          partnerName={partnerLabel(day)}
+          // title={day.prize?.title || "Клубный мерч!"}
+          requiresSubscription={day.partner != null}
+title={day.prize?.title || "Клубный мерч!"}          partnerName={partnerLabel(day)}
           mark={partnerKey(day)}
           image={day.prize?.image}
           resultsLabel={label}

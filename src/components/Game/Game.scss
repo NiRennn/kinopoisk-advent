@@ -213,8 +213,8 @@ body.is-mobile .game__content-logo,
     content: "";
     position: absolute;
     inset: 0;
-    -webkit-backdrop-filter: blur(12.3px);
-    backdrop-filter: blur(12.3px);
+    -webkit-backdrop-filter: blur(42.3px);
+    backdrop-filter: blur(42.3px);
 
     mask-image: linear-gradient(to bottom, transparent 0%, #000 100%);
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 100%);
@@ -263,7 +263,7 @@ body.is-mobile .game__content-logo,
 .game__blur-tip-text {
   font-family: "kinopoisk-regular";
   font-size: 14px;
-  color: #0000005E;
+  color: #00000095;
   line-height: 1;
 }
 

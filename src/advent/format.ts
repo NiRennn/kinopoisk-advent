@@ -165,8 +165,14 @@ export function partnerOfferCopy(title: string, iso: string | null) {
   return formatNbsp(`Сегодня разыгрывается ${prize}. Условие участия — подписка на канал клуба-партнера. Итоги — ${when ? `${when} МСК` : "скоро"}.`)
 }
 
-export function partnerSubscribeCopy(title: string, partner: string | null) {
-  const prize = title.replace(/\s*\n\s*/g, " ").trim() || "приз"
+// export function partnerSubscribeCopy(title: string, partner: string | null) {
+//   const prize = title.replace(/\s*\n\s*/g, " ").trim() || "приз"
+//   const club = partner ? ` ${partner}` : ""
+//   return formatNbsp(`Подпишитесь на канал клуба-партнёра ${club}. После подписки можно сразу проверить выполнение условия.`)
+// }
+export function partnerSubscribeCopy(partner: string | null) {
   const club = partner ? ` ${partner}` : ""
-  return formatNbsp(`Чтобы получить возможность выиграть ${prize}, подпишитесь на канал клуба-партнера${club}. После подписки можно сразу проверить выполнение условия.`)
+  return formatNbsp(
+    `Подпишитесь на канал клуба-партнёра${club}. После подписки можно сразу проверить выполнение условия.`,
+  )
 }
