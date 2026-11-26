@@ -7,7 +7,7 @@ import Button from "../Button/Button";
 import cross from "../../assets/icons/cross.svg";
 import station from "../../assets/images/cells/ice-prize1.png";
 import { formatNbsp } from "../../utils/typography";
-
+ 
 type PastDayProps = {
   image?: string | null;
   text?: string | null;

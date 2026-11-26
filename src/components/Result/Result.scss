@@ -309,9 +309,12 @@ body.is-mobile .result--win .result__logo,
     flex: 1 1 auto;
     min-height: 0;
     justify-content: space-between;
+    max-height: 500px;
   }
 
   .result__promo {
+      flex: 1;
+  justify-content: center;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -348,13 +351,39 @@ body.is-mobile .result--win .result__logo,
     font-family: "kinopoisk-semibold", sans-serif;
     font-size: 18px;
     line-height: 1;
+    cursor: pointer;
+background: transparent;
+color: inherit;
+padding: 0;
+appearance: none;
+-webkit-tap-highlight-color: transparent;
+transition: transform 0.2s ease;
+
+&:active {
+  transform: scale(0.98);
+}
   }
 
   .result__promo-actions {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    flex-shrink: 0;
   }
+
+  .result__hero {
+  flex: 1 0 auto;
+  justify-content: center;
+  padding: 20px 15px;
+  box-sizing: border-box;
+}
+
+.result__sheet--promo {
+  flex: 0 0 auto;
+  min-height: 50dvh;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
 }
 
 .result--lose {

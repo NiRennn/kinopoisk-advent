@@ -161,11 +161,15 @@ const hasFact = Boolean(
         {outcome === "win" ? (
           digital ? (
             <>
-              <h1 className="result__headline">{formatNbsp(title || "Вы выиграли!")}</h1>
-              <p className="result__lead">
+              {/* <h1 className="result__headline">{formatNbsp(title || "Вы выиграли!")}</h1> */}
+<h1 className="result__headline">
+  Подписка
+  <br />
+  {formatNbsp("«Матч Максимум» — ваша!")}
+</h1>              <p className="result__lead">
                 {formatNbsp(
                   title
-                    ? `Поздравляем! Промокод на ${title} уже доступен. Скопируйте код и активируйте подписку по инструкции`
+                    ? `Поздравляем! Промокод на подписку «Матч Максимум» уже доступен. Скопируйте код и активируйте подписку по инструкции`
                     : "Поздравляем! Промокод уже доступен. Скопируйте код и активируйте подписку по инструкции",
                 )}
               </p>
@@ -267,8 +271,15 @@ const hasFact = Boolean(
           <div className="result__promo">
             <h2>Ваш промокод</h2>
             {conditions && <p>{formatNbsp(`Срок действия и условия активации: ${conditions}`)}</p>}
-            {promoCode && <div className="result__codebox">{copied ? "Скопировано" : promoCode}</div>}
-          </div>
+{promoCode && (
+  <button
+    type="button"
+    className="result__codebox"
+    onClick={copyCode}
+  >
+    {copied ? "Скопировано" : promoCode}
+  </button>
+)}          </div>
           <div className="result__promo-actions">
             {promoCode && <Button onClick={copyCode}>Скопировать код</Button>}
             <Button variant="secondary" onClick={onClose}>Закрыть</Button>
@@ -293,7 +304,7 @@ const hasFact = Boolean(
           <img className="result__cubes" src={fact?.image || cubes} alt="" />
           {fact?.title && (
             <h2 className="result__fact-title">
-              {fact.title.split("\n").map((line, index) => (
+              {fact.title.split("\n").map((line, index) => ( 
                 <span key={index}>
                   {index > 0 && <br />}
                   {formatNbsp(line)}
