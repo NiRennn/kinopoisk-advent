@@ -138,3 +138,26 @@ body.is-mobile .onboarding__logo,
   line-height: 1;
   cursor: pointer;
 }
+
+.onboarding__pravila {
+    position: relative;
+  z-index: 1;
+  color: #00000099;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: -0.3px;
+  font-family: "kinopoisk-regular";
+  text-align: center;
+  margin-top: 12px;
+  max-width: 290px;
+
+}
+
+.onboarding__pravila a {
+  color: #000000;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 0.11em;
+  text-underline-offset: 0.25em;
+  text-decoration-skip-ink: auto;
+}

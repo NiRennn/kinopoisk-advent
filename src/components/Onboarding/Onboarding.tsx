@@ -52,6 +52,7 @@ function Onboarding({ onClose }: OnboardingProps) {
 
 
       <Button variant="primary" onClick={close}>Открыть календарь</Button>
+      <span className="onboarding__pravila">Продолжая, вы&nbsp;принимаете <a href="https://ya.ru/" target="_blank" rel="noopener noreferrer">правила акции</a> и&nbsp;<a href="https://ya.ru/" target="_blank" rel="noopener noreferrer">условия политики приватности</a></span>
     </div>,
     document.body,
   );
