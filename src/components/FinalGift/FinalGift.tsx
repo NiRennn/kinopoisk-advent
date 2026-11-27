@@ -8,12 +8,13 @@ import logo from "../../assets/icons/kinopoisk.svg"
 import phone from "../../assets/images/cells/ice-iphone1.png"
 import hlop from "../../assets/icons/hlop.svg"
 import cross from "../../assets/icons/cross.svg"
-import { finalWhen } from "../../advent/format"
+import { finalWhen, prizeCase } from "../../advent/format"
 import { formatNbsp } from "../../utils/typography"
 
 type FinalGiftProps = {
   joined: boolean
   title: string
+  titleAcc?: string | null
   image?: string | null
   resultsLabel: string
   resultsAt?: string | null
@@ -27,6 +28,7 @@ type FinalGiftProps = {
 function FinalGift({
   joined,
   title,
+  titleAcc,
   image,
   resultsLabel,
   resultsAt,
@@ -40,7 +42,7 @@ function FinalGift({
   const [joining, setJoining] = useState(false)
   const [celebrating, setCelebrating] = useState(false)
   const [error, setError] = useState("")
-  const prize = title.trim() || "iPhone Duo"
+  const prize = prizeCase(title, titleAcc) || "iPhone Duo"
   const when = finalWhen(resultsAt ?? null)
   const confirmed = joined || celebrating
   const picture = image || phone

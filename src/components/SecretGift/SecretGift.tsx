@@ -7,12 +7,14 @@ import logo from "../../assets/icons/kinopoisk.svg";
 import station from "../../assets/images/cells/ice-yandex1.png";
 import phone from "../../assets/images/cells/ice-iphone1.png";
 import hlop from "../../assets/icons/hlop.svg";
-import { alreadyCopy, joinedCopy } from "../../advent/format";
+import { alreadyCopy, joinedCopy, prizeCase } from "../../advent/format";
 import { formatNbsp } from "../../utils/typography";
 
 type SecretGiftProps = {
   joined: boolean;
   title: string;
+  titleAcc?: string | null;
+  titleGen?: string | null;
   text: string;
   image?: string | null;
   resultsLabel: string;
@@ -21,12 +23,14 @@ type SecretGiftProps = {
   onClose: () => void;
 };
 
-function SecretGift({ joined, title, image, resultsLabel, resultsAt, onJoin, onClose }: SecretGiftProps) {
+function SecretGift({ joined, title, titleAcc, titleGen, image, resultsLabel, resultsAt, onJoin, onClose }: SecretGiftProps) {
   const [closing, setClosing] = useState(false);
   const [joining, setJoining] = useState(false);
   const [celebrating, setCelebrating] = useState(false);
   const [error, setError] = useState("");
   const returning = joined && !celebrating;
+  const titleInAccusative = prizeCase(title, titleAcc);
+  const titleInGenitive = prizeCase(title, titleGen);
 
   const close = () => {
     if (closing || joining) return;
@@ -97,15 +101,10 @@ function SecretGift({ joined, title, image, resultsLabel, resultsAt, onJoin, onC
           </h1>
           <p className="secret__text">
             {celebrating
-              ? joinedCopy(title, resultsAt ?? null)
+              ? joinedCopy(titleInGenitive, resultsAt ?? null)
               : returning
                 ? alreadyCopy(resultsAt ?? null)
-                : <>{formatNbsp("Сегодня можно выиграть")} {title.split("\n").map((line, index) => (
-                  <span key={`${line}-${index}`}>
-                    {index > 0 && <br />}
-                    {formatNbsp(line)}
-                  </span>
-                ))}. {formatNbsp("Итоги розыгрыша — завтра в 12:00 МСК. Для участия достаточно нажать кнопку ниже")}</>}
+                : <>{formatNbsp(`Сегодня можно выиграть ${titleInAccusative}.`)} {formatNbsp("Итоги розыгрыша — завтра в 12:00 МСК. Для участия достаточно нажать кнопку ниже")}</>}
           </p>
         </div>
       </div>

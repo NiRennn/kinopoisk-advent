@@ -446,6 +446,8 @@ function Game() {
         <SecretGift
           joined={modal.day.status === "joined" || modal.day.participated}
           title={modal.day.prize?.title || "Шанс на розыгрыш"}
+          titleAcc={modal.day.prize?.title_acc}
+          titleGen={modal.day.prize?.title_gen}
           text={modal.day.prize?.text || ""}
           image={modal.day.prize?.image}
           resultsLabel={label}
@@ -459,6 +461,7 @@ function Game() {
         <FinalGift
           joined={modal.day.status === "joined" || modal.day.participated}
           title={modal.day.prize?.title || ""}
+          titleAcc={modal.day.prize?.title_acc}
           image={modal.day.prize?.image}
           resultsLabel={label}
           resultsAt={modal.day.results_at}

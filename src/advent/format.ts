@@ -103,8 +103,14 @@ export function finalWhen(iso: string | null) {
   return formatNbsp(`${date}, в ${when.hm} МСК`)
 }
 
-export function joinedCopy(title: string, iso: string | null) {
-  const prize = title.replace(/\s*\n\s*/g, " ").trim() || "приз"
+export function prizeCase(title: string, cased?: string | null) {
+  const value = (cased ?? "").replace(/\s*\n\s*/g, " ").trim()
+  if (value) return value
+  return title.replace(/\s*\n\s*/g, " ").trim()
+}
+
+export function joinedCopy(titleGen: string, iso: string | null) {
+  const prize = titleGen.replace(/\s*\n\s*/g, " ").trim() || "приза"
   const tail = "Когда они будут готовы, в Telegram придет уведомление."
   if (!iso) return formatNbsp(`Вы участвуете в розыгрыше ${prize}! Итоги появятся скоро. ${tail}`)
 
