@@ -168,12 +168,26 @@ function Result({
                 Подписка
                 <br />
                 {formatNbsp("«Матч Максимум» — ваша!")}
-              </h1>              <p className="result__lead">
+              </h1>
+              <p className="result__lead">
                 {formatNbsp(
-                  title
-                    ? `Поздравляем! Промокод на подписку «Матч Максимум» уже доступен. Скопируйте код и активируйте подписку по инструкции`
-                    : "Поздравляем! Промокод уже доступен. Скопируйте код и активируйте подписку по инструкции",
-                )}
+                  "Поздравляем! Промокод на подписку «Матч Максимум» уже доступен. Скопируйте код и активируйте подписку на сайте"
+                )}{" "}
+                <a
+                  href="https://www.kinopoisk.ru/special/matchmaximum/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(event) => {
+                    const tg = window.Telegram?.WebApp;
+
+                    if (typeof tg?.openLink === "function") {
+                      event.preventDefault();
+                      tg.openLink(event.currentTarget.href);
+                    }
+                  }}
+                >
+                  https://www.kinopoisk.ru/special/matchmaximum/
+                </a>.
               </p>
             </>
           ) : (
@@ -275,7 +289,7 @@ function Result({
 
             {conditions && (
               <p>
-                {formatNbsp(`Срок действия и условия активации: ${conditions}`)}
+                {formatNbsp(`Срок действия промокода 6 месяца с момента активации`)}
               </p>
             )}
 
@@ -327,25 +341,42 @@ function Result({
             </h2>
           )}
           {fact?.text && <p className="result__fact-text">{formatNbsp(fact.text)}</p>}
-          {factUrl && (
-            <a
-              className="result__fact-link"
-              href={factUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(event) => {
-                const tg = window.Telegram?.WebApp;
+          <div className="result__card-actions">
+            {factUrl && (
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  const tg = window.Telegram?.WebApp;
 
-                if (typeof tg?.openLink === "function") {
-                  event.preventDefault();
-                  tg.openLink(factUrl);
-                }
-              }}
-            >
-              {factUrl}
-            </a>
-          )}
-          <Button onClick={onClose}>{outcome === "missed" ? "К календарю" : "К Адвенту"}</Button>
+                  if (typeof tg?.openLink === "function") {
+                    tg.openLink(factUrl);
+                  } else {
+                    window.open(factUrl, "_blank", "noopener,noreferrer");
+                  }
+                }}
+              >
+                Узнать больше
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M6 2L12 8L6 14"
+                    stroke="currentColor"
+                    strokeWidth="2"
+
+                  />
+                </svg>
+              </Button>
+            )}
+
+            <Button onClick={onClose}>
+              {outcome === "missed" ? "К календарю" : "К Адвенту"}
+            </Button>
+          </div>
         </div>
       )}
 
