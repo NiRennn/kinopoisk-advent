@@ -32,6 +32,7 @@ type PartnerGiftProps = {
   requiresSubscription: boolean;
   title: string;
   partnerName?: string | null;
+  partnerGen?: string | null;
   mark?: PartnerKey | null;
   image?: string | null;
   resultsLabel: string;
@@ -55,6 +56,7 @@ function PartnerGift({
   requiresSubscription,
   title,
   partnerName,
+  partnerGen,
   mark = null,
   image,
   resultsLabel,
@@ -74,7 +76,8 @@ const [step, setStep] = useState<PartnerStep>(
   const [error, setError] = useState("");
   const confirmed = joined || celebrating;
   const showSecretPrize = !confirmed;
-  const from = partnerName ? `Подарок от ${partnerName}` : "Подарок от партнера";
+  const club = partnerGen?.trim() || partnerName?.trim() || ""
+  const from = club ? `Подарок от ${club}` : "Подарок от партнера"
 
   const close = () => {
     if (closing) return;

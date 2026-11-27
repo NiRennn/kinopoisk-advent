@@ -6,6 +6,8 @@ export type Prize = {
   title: string
   title_acc?: string | null
   title_gen?: string | null
+  partner?: string | null
+  partner_gen?: string | null
   text: string
   image: string | null
   type: "physical" | "digital"
