@@ -165,6 +165,11 @@ function resultsClock(iso: string | null) {
   return `${when.d} ${MONTHS[when.m - 1]} в ${when.hm}`
 }
 
+export function resultsDraw(iso: string | null) {
+  const when = resultsClock(iso)
+  return when ? `${when} МСК` : "скоро"
+}
+
 export function partnerOfferCopy(title: string, iso: string | null) {
   const prize = title.replace(/\s*\n\s*/g, " ").trim() || "приз"
   const when = resultsClock(iso)

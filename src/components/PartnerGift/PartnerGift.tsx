@@ -10,13 +10,14 @@ import station from "../../assets/images/cells/ice-yandex1.png";
 import cellRfc from "../../assets/images/cells/cell-rfc1.png";
 import cellKhl from "../../assets/images/cells/cell-khl1.png";
 import cellRuspace from "../../assets/images/cells/cell-ruspace1.png";
+import cellVtb from "../../assets/images/cells/cell-vtb1.png";
 import phone from "../../assets/images/cells/ice-iphone1.png";
 import hlop from "../../assets/icons/hlop.svg";
 import info from "../../assets/icons/info-orange.svg";
 import refresh from "../../assets/icons/sub-check.svg";
 import { ApiError } from "../../api/client";
 import type { PartnerKey } from "../../advent/cells";
-import { alreadyCopy, partnerSubscribeCopy } from "../../advent/format";import { formatNbsp } from "../../utils/typography";
+import { alreadyCopy, partnerSubscribeCopy } from "../../advent/format"; import { formatNbsp } from "../../utils/typography";
 import secretBox from '../../assets/images/cells/ice-prize1.png'
 
 type PartnerStep = "subscribe" | "checking" | "failed" | "gift";
@@ -25,6 +26,7 @@ const MARK: Record<Exclude<PartnerKey, "zenit">, string> = {
   rfc: cellRfc,
   khl: cellKhl,
   ruspace: cellRuspace,
+  vtb: cellVtb
 };
 
 type PartnerGiftProps = {
@@ -48,7 +50,7 @@ function prizePicture(title: string, image: string | null | undefined, mark: Par
   if (mark === "zenit") return iceZenit;
   if (/станц/i.test(title)) return station;
   if (mark) return MARK[mark];
-  return station; 
+  return station;
 }
 
 function PartnerGift({
@@ -67,8 +69,8 @@ function PartnerGift({
   onClose,
 }: PartnerGiftProps) {
   // const [step, setStep] = useState<PartnerStep>(joined ? "gift" : "subscribe");
-const [step, setStep] = useState<PartnerStep>(
-   joined || !requiresSubscription ? "gift" : "subscribe",
+  const [step, setStep] = useState<PartnerStep>(
+    joined || !requiresSubscription ? "gift" : "subscribe",
   );
   const [closing, setClosing] = useState(false);
   const [joining, setJoining] = useState(false);
@@ -106,8 +108,8 @@ const [step, setStep] = useState<PartnerStep>(
       setCelebrating(true);
     } catch (reason) {
       // if (reason instanceof ApiError && reason.code === "not_subscribed_partner") {
-            if (
-       requiresSubscription &&
+      if (
+        requiresSubscription &&
         reason instanceof ApiError &&
         reason.code === "not_subscribed_partner"
       ) {
@@ -169,27 +171,27 @@ const [step, setStep] = useState<PartnerStep>(
       ) : gift ? (
         <div className="secret__body">
           <div className="partner__hero">
-<img
-  className="secret__prize"
-  src={showSecretPrize ? secretBox : prizePicture(title, image, mark)}
-  alt=""
-/>            {mark && (
+            <img
+              className="secret__prize"
+              src={showSecretPrize ? secretBox : prizePicture(title, image, mark)}
+              alt=""
+            />            {mark && (
               <div
                 className={`partner__badge${markPhoto ? " partner__badge--photo" : ""}`}
                 style={markPhoto ? { backgroundImage: `url("${markPhoto}")` } : undefined}
               />
             )}
           </div>
-<div className="secret__copy">
-  <p className="partner__from">{formatNbsp(from)}</p>
-<h1 className="secret__title">
-  {showSecretPrize ? "Секретный приз" : formatNbsp(title)}
-</h1>  <p className="secret__text">
-  {confirmed
-    ? alreadyCopy(resultsAt ?? null)
-    : formatNbsp(`Для участия нажмите кнопку ниже. ${resultsLabel}`)}
-</p>
-</div>
+          <div className="secret__copy">
+            <p className="partner__from">{formatNbsp(from)}</p>
+            <h1 className="secret__title">
+              {showSecretPrize ? "Секретный приз" : formatNbsp(title)}
+            </h1>  <p className="secret__text">
+              {confirmed
+                ? alreadyCopy(resultsAt ?? null)
+                : formatNbsp(`Для участия нажмите кнопку ниже. ${resultsLabel}`)}
+            </p>
+          </div>
         </div>
       ) : (
         <div className="secret__body">
@@ -205,9 +207,9 @@ const [step, setStep] = useState<PartnerStep>(
               <br />
               клуба-партнера
             </h1>
-<p className="secret__text">
-  {partnerSubscribeCopy(partnerName ?? null)}
-</p>          </div>
+            <p className="secret__text">
+              {partnerSubscribeCopy(partnerName ?? null)}
+            </p>          </div>
         </div>
       )}
 

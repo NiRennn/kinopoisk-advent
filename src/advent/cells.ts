@@ -8,15 +8,17 @@ import cellZenit from "../assets/images/cells/cell-zenit1.png"
 import icePrize from "../assets/images/cells/ice-prize1.png"
 import iceYandex from "../assets/images/cells/ice-yandex1.png"
 import iceZenit from "../assets/images/cells/ice-zenit.png"
+import cellVtb from "../assets/images/cells/cell-vtb1.png"
 import { dayOf } from "./format"
 
-export type PartnerKey = "zenit" | "rfc" | "khl" | "ruspace"
+export type PartnerKey = "zenit" | "rfc" | "khl" | "ruspace" | "vtb"
 
 const PARTNER_CELL: Record<PartnerKey, string> = {
   zenit: cellZenit,
   rfc: cellRfc,
   khl: cellKhl,
   ruspace: cellRuspace,
+  vtb: cellVtb,
 }
 
 const PARTNER_DAY: Record<number, PartnerKey> = {
@@ -24,6 +26,7 @@ const PARTNER_DAY: Record<number, PartnerKey> = {
   7: "rfc",
   11: "khl",
   15: "ruspace",
+  21: "vtb",
 }
 
 export function partnerKey(day: Day): PartnerKey | null {
@@ -33,6 +36,7 @@ export function partnerKey(day: Day): PartnerKey | null {
   if (title.includes("кхл") || title.includes("khl")) return "khl"
   if (title.includes("роскосмос") || title.includes("space") || title.includes("ruspace")) return "ruspace"
   if (title.includes("рфс") || title.includes("rfc")) return "rfc"
+  if (title.includes("втб") || title.includes("vtb")) return "vtb"
   return PARTNER_DAY[dayOf(day.date)] ?? null
 }
 
@@ -41,6 +45,7 @@ const PARTNER_NAME: Record<PartnerKey, string> = {
   rfc: "РФС",
   khl: "КХЛ",
   ruspace: "Роскосмос",
+  vtb: "ВТБ"
 }
 
 export function partnerLabel(day: Day) {

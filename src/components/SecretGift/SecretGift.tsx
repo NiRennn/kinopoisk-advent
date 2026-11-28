@@ -7,7 +7,7 @@ import logo from "../../assets/icons/kinopoisk.svg";
 import station from "../../assets/images/cells/ice-yandex1.png";
 import phone from "../../assets/images/cells/ice-iphone1.png";
 import hlop from "../../assets/icons/hlop.svg";
-import { alreadyCopy, joinedCopy, prizeCase } from "../../advent/format";
+import { alreadyCopy, joinedCopy, prizeCase, resultsDraw } from "../../advent/format";
 import { formatNbsp } from "../../utils/typography";
 
 type SecretGiftProps = {
@@ -104,7 +104,7 @@ function SecretGift({ joined, title, titleAcc, titleGen, image, resultsLabel, re
               ? joinedCopy(titleInGenitive, resultsAt ?? null)
               : returning
                 ? alreadyCopy(resultsAt ?? null)
-                : <>{formatNbsp(`Сегодня можно выиграть ${titleInAccusative}.`)} {formatNbsp("Итоги розыгрыша — завтра в 12:00 МСК. Для участия достаточно нажать кнопку ниже")}</>}
+                : <>{formatNbsp(`Сегодня можно выиграть ${titleInAccusative}.`)} {formatNbsp(`Итоги розыгрыша — ${resultsDraw(resultsAt ?? null)}. Для участия достаточно нажать кнопку ниже`)}</>}
           </p>
         </div>
       </div>
