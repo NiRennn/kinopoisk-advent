@@ -12,9 +12,9 @@ import PastDay from "../PastDay/PastDay"
 import Result, { type ResultOutcome } from "../Result/Result"
 import Button from "../Button/Button"
 import { ApiError } from "../../api/client"
-import { checkPartner, getDay, joinDay, openApp, submitWinnerForm } from "../../api/advent"
+import { checkPartner, getDay, joinDay, submitWinnerForm } from "../../api/advent"
 import type { Day, WinnerForm } from "../../api/types"
-import { getAdventSession, prepareDay, presentCode, type AdventPhase } from "../../advent/session"
+import { getAdventSession, prepareDay, type AdventPhase } from "../../advent/session"
 import { cellView, partnerKey, partnerLabel } from "../../advent/cells"
 import { dayOf, resultsLabel } from "../../advent/format"
 import { formatNbsp } from "../../utils/typography"
@@ -107,8 +107,8 @@ function Game() {
   const [phase, setPhase] = useState<AdventPhase>(initial?.phase ?? "error")
   const [days, setDays] = useState<Day[]>(initial?.days ?? [])
   const [modal, setModal] = useState<Modal>(null)
-  const [botUrl, setBotUrl] = useState(initial?.botUrl ?? "")
-  const [trialCode, setTrialCode] = useState<string | null>(initial?.trialCode ?? null)
+  const [botUrl] = useState(initial?.botUrl ?? "")
+  const [trialCode] = useState<string | null>(initial?.trialCode ?? null)
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [revealGrid, setRevealGrid] = useState(false)
   const [showHint, setShowHint] = useState(false)
@@ -154,44 +154,6 @@ function Game() {
     pendingRef.current = pendingAction(days)
     setShowOnboarding(true)
   }, [phase])
-
-  useEffect(() => {
-    let cancelled = false
-
-    const refresh = async () => {
-      if (!liveRef.current) return
-      try {
-        const data = await openApp()
-        if (cancelled) return
-        setBotUrl(data.bot_url)
-        setTrialCode(presentCode(data.trial?.code))
-        if (!data.subscribed) {
-          setPhase("subscribe")
-          return
-        }
-        const list = data.days.map(prepareDay)
-        setDays(list)
-        setModal((current) => {
-          if (!current) return current
-          const fresh = list.find((item) => item.date === current.day.date)
-          if (!fresh) return current
-          const merged = { ...current.day, ...fresh, fact: fresh.fact ?? current.day.fact, winner: fresh.winner ?? current.day.winner }
-          return screenFor(merged, current.type === "result" ? "result" : "cell")
-        })
-      } catch {
-        // Keep the calendar that is already on screen.
-      }
-    }
-
-    const onVisible = () => {
-      if (document.visibilityState === "visible") void refresh()
-    }
-    document.addEventListener("visibilitychange", onVisible)
-    return () => {
-      cancelled = true
-      document.removeEventListener("visibilitychange", onVisible)
-    }
-  }, [])
 
   useEffect(() => {
     if (showOnboarding || modal || showShare || phase !== "ready" || openedToday.current) {
